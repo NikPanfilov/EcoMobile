@@ -68,6 +68,7 @@ dependencies {
 
 	implementation project(path: ':feature:home')
 	implementation project(path: ':feature:post')
+	implementation project(path: ':feature:signup')
 
 	testImplementation 'junit:junit:4.13.2'
 	androidTestImplementation 'androidx.test.ext:junit:1.1.5'
