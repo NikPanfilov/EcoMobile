@@ -1,6 +1,6 @@
 package com.startup.ecoapp.core.network.provider
 
-import com.startup.network.interceptors.TokenAuthenticator
+import com.startup.ecoapp.core.network.interceptors.TokenAuthenticator
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit
