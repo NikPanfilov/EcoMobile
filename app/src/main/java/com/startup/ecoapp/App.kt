@@ -4,6 +4,7 @@ import android.app.Application
 import com.startup.ecoapp.di.appModule
 import com.startup.ecoapp.di.signUpModule
 import com.startup.ecoapp.di.networkModule
+import com.startup.ecoapp.di.signInModule
 import com.startup.ecoapp.di.tokenModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidFileProperties
@@ -38,6 +39,7 @@ class App : Application() {
 			modules(tokenModule)
 
 			modules(signUpModule)
+			modules(signInModule)
 		}
 	}
 }
