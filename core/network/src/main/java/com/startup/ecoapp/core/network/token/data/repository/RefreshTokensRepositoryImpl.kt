@@ -1,7 +1,7 @@
 package com.startup.ecoapp.core.network.token.data.repository
 
-import com.startup.network.token.data.datasource.RefreshTokensDataSource
-import com.startup.network.token.domain.repository.RefreshTokensRepository
+import com.startup.ecoapp.core.network.token.data.datasource.RefreshTokensDataSource
+import com.startup.ecoapp.core.network.token.domain.repository.RefreshTokensRepository
 
 class RefreshTokensRepositoryImpl(
 	private val dataSource: RefreshTokensDataSource

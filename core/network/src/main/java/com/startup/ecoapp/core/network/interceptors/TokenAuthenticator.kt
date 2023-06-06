@@ -1,7 +1,7 @@
 package com.startup.ecoapp.core.network.interceptors
 
-import com.startup.network.token.domain.usecase.RefreshTokensUseCase
-import com.startup.network.token.domain.usecase.SaveTokenUseCase
+import com.startup.ecoapp.core.network.token.domain.usecase.RefreshTokensUseCase
+import com.startup.ecoapp.core.network.token.domain.usecase.SaveTokenUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

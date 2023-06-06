@@ -1,7 +1,7 @@
 package com.startup.ecoapp.core.network.utils
 
 import android.util.Log
-import com.startup.network.interceptors.NoConnectivityException
+import com.startup.ecoapp.core.network.interceptors.NoConnectivityException
 import kotlinx.coroutines.CoroutineExceptionHandler
 import retrofit2.HttpException
 import kotlin.coroutines.AbstractCoroutineContextElement

@@ -2,6 +2,8 @@ package com.startup.ecoapp
 
 import android.app.Application
 import com.startup.ecoapp.di.appModule
+import com.startup.ecoapp.di.networkModule
+import com.startup.ecoapp.di.tokenModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidFileProperties
 import org.koin.android.ext.koin.androidLogger
@@ -13,7 +15,7 @@ class App : Application() {
 	companion object {
 
 		const val BACKEND = "BACKEND"
-		private const val BACKEND_ENDPOINT = ""//TODO(Вставить ссылку на бэкенд)
+		private const val BACKEND_ENDPOINT = "http://d.wolf.16.fvds.ru/"
 
 		internal lateinit var INSTANCE: App
 			private set
@@ -31,6 +33,8 @@ class App : Application() {
 			androidFileProperties()
 
 			modules(appModule)
+			modules(networkModule)
+			modules(tokenModule)
 		}
 	}
 }
