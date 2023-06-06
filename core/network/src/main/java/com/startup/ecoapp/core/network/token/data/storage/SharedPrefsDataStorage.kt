@@ -2,7 +2,7 @@ package com.startup.ecoapp.core.network.token.data.storage
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.startup.network.token.domain.model.AuthTokenPair
+import com.startup.ecoapp.core.network.token.domain.model.AuthTokenPair
 
 class SharedPrefsDataStorage(context: Context) : TokenDataStorage {
 	companion object {

@@ -26,20 +26,28 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.startup.ecoapp.domain.models.Post
 import com.startup.ecoapp.feature.home.R
+import com.startup.ecoapp.feature.home.presentation.HomeViewModel
 import com.startup.theme.R as ThemeR
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(navController: NavController) {
+fun HomeScreen(homeViewModel: HomeViewModel = viewModel(), navController:NavController) {
+
+	val homeUiState by homeViewModel.uiState.collectAsState()
 	Scaffold(bottomBar = { NavigationBottomBar() }, topBar = { NavigationTopBar() }) {
 		LazyColumn(
 			verticalArrangement = Arrangement.spacedBy(20.dp),
@@ -49,8 +57,8 @@ fun HomeScreen(navController: NavController) {
 				.padding(paddingValues = it)
 				.padding(start = 20.dp, end = 20.dp)
 		) {
-			items(Datasource.postList.size) { i ->
-				Post(Datasource.postList[i], onClick = {
+			items(homeUiState.posts.size) { i ->
+				Post(homeUiState.posts[i], onClick = {
 					navController.navigate("post_screen")
 				})
 			}
@@ -58,6 +66,7 @@ fun HomeScreen(navController: NavController) {
 	}
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Post(post: Post, onClick: () -> Unit) {
 	Card(modifier = Modifier.clickable { onClick() }) {
