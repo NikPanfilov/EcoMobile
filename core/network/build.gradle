@@ -38,4 +38,5 @@ dependencies {
 	implementation "com.squareup.moshi:moshi-kotlin:1.14.0"
 
 	implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.6.4"
+	implementation 'androidx.core:core-ktx:+'
 }

@@ -38,8 +38,10 @@ import com.startup.theme.R as ThemeR
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PostScreen(navController: NavController) {
-	val post = Datasource.postList[0]
+fun PostScreen(postViewModel: PostViewModel = viewModel(), navController: NavController) {
+
+	val state by postViewModel.uiState.collectAsState()
+	val post = state.post
 
 	Scaffold(
 		bottomBar = { PostNavigationBottomBar(navController) },
@@ -63,7 +65,7 @@ fun PostScreen(navController: NavController) {
 						horizontalArrangement = Arrangement.spacedBy(10.dp)
 					) {
 						Image(
-							painterResource(id = post.avatarId),
+							painterResource(id = state.post.avatarId),
 							contentDescription = "avatar",
 							modifier = Modifier
 								.size(40.dp)
@@ -85,8 +87,8 @@ fun PostScreen(navController: NavController) {
 							.fillMaxWidth()
 					)
 					Text(post.text,
-						 color = Color.Black,
-						 style = MaterialTheme.typography.bodyLarge)
+						color = Color.Black,
+						style = MaterialTheme.typography.bodyLarge)
 					Row(
 						verticalAlignment = Alignment.CenterVertically,
 						horizontalArrangement = Arrangement.SpaceEvenly
@@ -108,8 +110,8 @@ fun PostScreen(navController: NavController) {
 					}
 				}
 			}
-			items(Datasource.commentList.size) { i ->
-				Comment(comment = Datasource.commentList[i])
+			items(state.comments.size) { i ->
+				Comment(comment = state.comments[i])
 			}
 		}
 	}
@@ -159,7 +161,6 @@ fun Comment(comment: Comment) {
 	}
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PostNavigationBottomBar(navController: NavController) {
 	var comment by remember { mutableStateOf("") }
@@ -197,15 +198,34 @@ fun PostNavigationTopBar(navController: NavController) {
 			.padding(10.dp)
 	) {
 		Image(imageVector = Icons.Default.ArrowBack,
-			  contentDescription = "back",
-			  modifier = Modifier
-				  .size(30.dp)
-				  .clickable { navController.navigate("home_screen") })
+			contentDescription = "back",
+			modifier = Modifier
+				.size(30.dp)
+				.clickable { navController.navigate("home_screen") })
 		Image(
 			imageVector = Icons.Default.Search, contentDescription = "search",
 			modifier = Modifier
 				.size(30.dp)
 		)
+	}
+}
+
+@Composable
+fun PostType(type: String) {
+	Surface(
+		shape = RoundedCornerShape(5.dp),
+		color = MaterialTheme.colorScheme.primary,
+		modifier = Modifier
+			.padding(end = 5.dp, bottom = 5.dp)
+			.height(25.dp),
+	) {
+		Text(
+			text = type,
+			style = MaterialTheme.typography.bodySmall,
+			color = Color.White,
+			modifier = Modifier.padding(5.dp),
+
+			)
 	}
 }
 
