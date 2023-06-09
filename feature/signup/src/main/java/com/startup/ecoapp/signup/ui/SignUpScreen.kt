@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.Card
@@ -22,10 +24,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.startup.ecoapp.signup.presentation.SignUpIntent
@@ -37,6 +43,7 @@ import org.koin.androidx.compose.koinViewModel
 fun SignUpScreen(navController: NavController, signUpViewModel: SignUpViewModel = koinViewModel()) {
 
     val state by signUpViewModel.uiState.collectAsState(SignUpState())
+    val focusManager = LocalFocusManager.current
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -66,13 +73,18 @@ fun SignUpScreen(navController: NavController, signUpViewModel: SignUpViewModel 
                             "First name", color = MaterialTheme.colorScheme.primary
                         )
                     },
-                    singleLine = true
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                    keyboardActions = KeyboardActions(
+                        onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                    )
                 )
                 if (state.firstNameError != null) Text(
                     text = state.firstNameError!!,
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.align(Alignment.End)
                 )
+
                 OutlinedTextField(
                     value = state.lastName,
                     onValueChange = { signUpViewModel.handle(SignUpIntent.ChangeUserLastName(it)) },
@@ -81,7 +93,11 @@ fun SignUpScreen(navController: NavController, signUpViewModel: SignUpViewModel 
                             "Last name", color = MaterialTheme.colorScheme.primary
                         )
                     },
-                    singleLine = true
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                    keyboardActions = KeyboardActions(
+                        onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                    )
                 )
                 if (state.lastNameError != null) Text(
                     text = state.lastNameError!!,
@@ -96,7 +112,11 @@ fun SignUpScreen(navController: NavController, signUpViewModel: SignUpViewModel 
                             "Birth date", color = MaterialTheme.colorScheme.primary
                         )
                     },
-                    singleLine = true
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                    keyboardActions = KeyboardActions(
+                        onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                    )
                 )
                 if (state.birthDateError != null) Text(
                     text = state.birthDateError!!,
@@ -111,7 +131,11 @@ fun SignUpScreen(navController: NavController, signUpViewModel: SignUpViewModel 
                             "City", color = MaterialTheme.colorScheme.primary
                         )
                     },
-                    singleLine = true
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                    keyboardActions = KeyboardActions(
+                        onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                    )
                 )
                 if (state.cityError != null) Text(
                     text = state.cityError!!,
@@ -126,7 +150,11 @@ fun SignUpScreen(navController: NavController, signUpViewModel: SignUpViewModel 
                             "Phone", color = MaterialTheme.colorScheme.primary
                         )
                     },
-                    singleLine = true
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                    keyboardActions = KeyboardActions(
+                        onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                    )
                 )
                 if (state.phoneError != null) Text(
                     text = state.phoneError!!,
@@ -141,7 +169,11 @@ fun SignUpScreen(navController: NavController, signUpViewModel: SignUpViewModel 
                             "Email", color = MaterialTheme.colorScheme.primary
                         )
                     },
-                    singleLine = true
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                    keyboardActions = KeyboardActions(
+                        onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                    )
                 )
                 if (state.emailError != null) Text(
                     text = state.emailError!!,
@@ -156,7 +188,15 @@ fun SignUpScreen(navController: NavController, signUpViewModel: SignUpViewModel 
                             "Password", color = MaterialTheme.colorScheme.primary
                         )
                     },
-                    singleLine = true
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Next,
+                        keyboardType = KeyboardType.Password
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                    ),
+                    visualTransformation = PasswordVisualTransformation()
                 )
                 if (state.passwordError != null) Text(
                     text = state.passwordError!!,
@@ -174,7 +214,15 @@ fun SignUpScreen(navController: NavController, signUpViewModel: SignUpViewModel 
                         "Confirm password", color = MaterialTheme.colorScheme.primary
                     )
                 },
-                    singleLine = true
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Done,
+                        keyboardType = KeyboardType.Password
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = { focusManager.clearFocus() }
+                    ),
+                    visualTransformation = PasswordVisualTransformation()
                 )
                 if (state.confirmPasswordError != null) Text(
                     text = state.confirmPasswordError!!,
@@ -198,7 +246,11 @@ fun SignUpScreen(navController: NavController, signUpViewModel: SignUpViewModel 
             if (!hasError) signUpViewModel.handle(SignUpIntent.ConfirmSignIn)
 
         }, Modifier.width(150.dp)) {
-            Text("Confirm", style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onPrimary)
+            Text(
+                "Confirm",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onPrimary
+            )
         }
         Text(
             "Have an account?", modifier = Modifier.clickable {
@@ -211,6 +263,6 @@ fun SignUpScreen(navController: NavController, signUpViewModel: SignUpViewModel 
 
 @Preview
 @Composable
-fun preview() {
+fun Preview2() {
     SignUpScreen(navController = rememberNavController())
 }
