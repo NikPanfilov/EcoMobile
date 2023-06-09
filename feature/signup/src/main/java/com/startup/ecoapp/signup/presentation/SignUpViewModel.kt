@@ -1,5 +1,6 @@
 package com.startup.ecoapp.signup.presentation
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.startup.ecoapp.core.network.token.domain.usecase.SaveTokenUseCase

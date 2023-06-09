@@ -11,7 +11,7 @@ import com.startup.ecoapp.signup.ui.SignUpScreen
 @Composable
 fun Navigation() {
 	val navController = rememberNavController()
-	NavHost(navController = navController, startDestination = Screen.HomeScreen.route) {
+	NavHost(navController = navController, startDestination = Screen.SignUpScreen.route) {
 		composable(Screen.HomeScreen.route) {
 			//HomeScreen(navController = navController)
 		}

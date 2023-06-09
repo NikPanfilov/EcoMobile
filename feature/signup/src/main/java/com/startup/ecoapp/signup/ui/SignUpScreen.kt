@@ -31,9 +31,10 @@ import androidx.navigation.compose.rememberNavController
 import com.startup.ecoapp.signup.presentation.SignUpIntent
 import com.startup.ecoapp.signup.presentation.SignUpState
 import com.startup.ecoapp.signup.presentation.SignUpViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun SignUpScreen(navController: NavController, signUpViewModel: SignUpViewModel = viewModel()) {
+fun SignUpScreen(navController: NavController, signUpViewModel: SignUpViewModel = koinViewModel()) {
 
     val state by signUpViewModel.uiState.collectAsState(SignUpState())
 
@@ -57,85 +58,106 @@ fun SignUpScreen(navController: NavController, signUpViewModel: SignUpViewModel 
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                OutlinedTextField(value = state.firstName,
+                OutlinedTextField(
+                    value = state.firstName,
                     onValueChange = { signUpViewModel.handle(SignUpIntent.ChangeUserFirstName(it)) },
                     label = {
                         Text(
                             "First name", color = MaterialTheme.colorScheme.primary
                         )
-                    })
+                    },
+                    singleLine = true
+                )
                 if (state.firstNameError != null) Text(
                     text = state.firstNameError!!,
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.align(Alignment.End)
                 )
-                OutlinedTextField(value = state.lastName,
+                OutlinedTextField(
+                    value = state.lastName,
                     onValueChange = { signUpViewModel.handle(SignUpIntent.ChangeUserLastName(it)) },
                     label = {
                         Text(
                             "Last name", color = MaterialTheme.colorScheme.primary
                         )
-                    })
+                    },
+                    singleLine = true
+                )
                 if (state.lastNameError != null) Text(
                     text = state.lastNameError!!,
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.align(Alignment.End)
                 )
-                OutlinedTextField(value = state.birthDate,
+                OutlinedTextField(
+                    value = state.birthDate,
                     onValueChange = { signUpViewModel.handle(SignUpIntent.ChangeUserBirthDate(it)) },
                     label = {
                         Text(
                             "Birth date", color = MaterialTheme.colorScheme.primary
                         )
-                    })
+                    },
+                    singleLine = true
+                )
                 if (state.birthDateError != null) Text(
                     text = state.birthDateError!!,
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.align(Alignment.End)
                 )
-                OutlinedTextField(value = state.city,
+                OutlinedTextField(
+                    value = state.city,
                     onValueChange = { signUpViewModel.handle(SignUpIntent.ChangeUserCity(it)) },
                     label = {
                         Text(
                             "City", color = MaterialTheme.colorScheme.primary
                         )
-                    })
+                    },
+                    singleLine = true
+                )
                 if (state.cityError != null) Text(
                     text = state.cityError!!,
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.align(Alignment.End)
                 )
-                OutlinedTextField(value = state.phone,
+                OutlinedTextField(
+                    value = state.phone,
                     onValueChange = { signUpViewModel.handle(SignUpIntent.ChangeUserPhone(it)) },
                     label = {
                         Text(
                             "Phone", color = MaterialTheme.colorScheme.primary
                         )
-                    })
+                    },
+                    singleLine = true
+                )
                 if (state.phoneError != null) Text(
                     text = state.phoneError!!,
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.align(Alignment.End)
                 )
-                OutlinedTextField(value = state.email,
+                OutlinedTextField(
+                    value = state.email,
                     onValueChange = { signUpViewModel.handle(SignUpIntent.ChangeUserEmail(it)) },
                     label = {
                         Text(
                             "Email", color = MaterialTheme.colorScheme.primary
                         )
-                    })
+                    },
+                    singleLine = true
+                )
                 if (state.emailError != null) Text(
                     text = state.emailError!!,
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.align(Alignment.End)
                 )
-                OutlinedTextField(value = state.password,
+                OutlinedTextField(
+                    value = state.password,
                     onValueChange = { signUpViewModel.handle(SignUpIntent.ChangeUserPassword(it)) },
                     label = {
                         Text(
                             "Password", color = MaterialTheme.colorScheme.primary
                         )
-                    })
+                    },
+                    singleLine = true
+                )
                 if (state.passwordError != null) Text(
                     text = state.passwordError!!,
                     color = MaterialTheme.colorScheme.error,
@@ -151,7 +173,9 @@ fun SignUpScreen(navController: NavController, signUpViewModel: SignUpViewModel 
                     Text(
                         "Confirm password", color = MaterialTheme.colorScheme.primary
                     )
-                })
+                },
+                    singleLine = true
+                )
                 if (state.confirmPasswordError != null) Text(
                     text = state.confirmPasswordError!!,
                     color = MaterialTheme.colorScheme.error,
@@ -174,12 +198,12 @@ fun SignUpScreen(navController: NavController, signUpViewModel: SignUpViewModel 
             if (!hasError) signUpViewModel.handle(SignUpIntent.ConfirmSignIn)
 
         }, Modifier.width(150.dp)) {
-            androidx.compose.material3.Text("Confirm", style = MaterialTheme.typography.bodyLarge)
+            Text("Confirm", style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onPrimary)
         }
         Text(
             "Have an account?", modifier = Modifier.clickable {
-                    navController.navigate("signIn_screen")
-                }, style = MaterialTheme.typography.titleSmall, color = Color.Gray
+                navController.navigate("signIn_screen")
+            }, style = MaterialTheme.typography.titleSmall, color = Color.Gray
         )
         Spacer(Modifier.height(20.dp))
     }
