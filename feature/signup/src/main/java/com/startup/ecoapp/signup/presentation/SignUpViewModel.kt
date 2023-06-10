@@ -1,6 +1,5 @@
 package com.startup.ecoapp.signup.presentation
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.startup.ecoapp.core.network.token.domain.usecase.SaveTokenUseCase
@@ -49,7 +48,7 @@ class SignUpViewModel(
 
     fun handle(intent: SignUpIntent) {
         when (intent) {
-            SignUpIntent.ConfirmSignIn -> signUp()
+            SignUpIntent.ConfirmSignUp -> signUp()
 
             is SignUpIntent.ChangeUserFirstName -> updateFirstName(intent.firstName)
 
