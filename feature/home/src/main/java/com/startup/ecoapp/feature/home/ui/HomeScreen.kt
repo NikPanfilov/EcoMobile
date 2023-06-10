@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -39,7 +40,9 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import com.startup.ecoapp.feature.home.R
 import com.startup.ecoapp.feature.home.models.Post
+import com.startup.ecoapp.feature.home.presentation.HomeIntent
 import com.startup.ecoapp.feature.home.presentation.HomeViewModel
+import com.startup.ecoapp.feature.home.presentation.UserReaction
 import com.startup.theme.R as ThemeR
 
 @Composable
@@ -58,6 +61,10 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = view
             items(state.posts.size) { i ->
                 Post(state.posts[i], onClick = {
                     navController.navigate("post_screen")
+                }, onDownVoteClick = {
+                    homeViewModel.handle(HomeIntent.PutUpVote(state.posts[i].id))
+                }, onUpVoteClick = {
+                    homeViewModel.handle(HomeIntent.PutDownVote(state.posts[i].id))
                 })
             }
         }
@@ -65,8 +72,13 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = view
 }
 
 @Composable
-fun Post(post: Post, onClick: () -> Unit) {
-    Card(modifier = Modifier.clickable { onClick() }) {
+fun Post(
+    post: Post,
+    onClick: () -> Unit,
+    onUpVoteClick: () -> Unit,
+    onDownVoteClick: () -> Unit,
+) {
+    Card() {
         Column(
             verticalArrangement = Arrangement.spacedBy(20.dp),
             modifier = Modifier
@@ -80,30 +92,26 @@ fun Post(post: Post, onClick: () -> Unit) {
                 Image(
                     painter = rememberAsyncImagePainter(post.avatarImage),
                     contentDescription = "avatar",
-                    modifier = Modifier
-                        .size(40.dp)
+                    modifier = Modifier.size(40.dp)
                 )
                 Text(post.author, style = MaterialTheme.typography.titleSmall)
                 Text(post.time, color = Color.Gray)
             }
-            Row()
-            {
+            Row() {
                 for (type in post.categories) {
                     PostType(type = type)
                 }
             }
             Text(post.title, style = MaterialTheme.typography.titleLarge)
-            if (post.image != null)
-                Image(
-                    rememberAsyncImagePainter(post.image),
-                    contentDescription = "postImage",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
+            if (post.image != null) Image(
+                rememberAsyncImagePainter(post.image),
+                contentDescription = "postImage",
+                modifier = Modifier.fillMaxWidth()
+            )
             var postText = ""
-            if (post.text.length > 100)
-                postText = post.text.subSequence(0, 100).toString() + "..."
-            Text(postText, color = Color.Gray)
+            if (post.text.length > 100) postText = post.text.subSequence(0, 100).toString() + "..."
+            Text(postText, color = Color.Gray,
+                modifier = Modifier.clickable { onClick() })
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceEvenly
@@ -112,15 +120,38 @@ fun Post(post: Post, onClick: () -> Unit) {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    Image(
-                        painterResource(id = ThemeR.drawable.thumb_up),
-                        contentDescription = "upVote"
-                    )
+                    if (post.userReaction == UserReaction.LIKE)
+                        Icon(
+                            painterResource(id = ThemeR.drawable.thumb_up),
+                            contentDescription = "upVote",
+                            modifier = Modifier.clickable {
+                                onUpVoteClick()
+                            },
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    else
+                        Icon(painterResource(id = ThemeR.drawable.thumb_up),
+                            contentDescription = "upVote",
+                            modifier = Modifier.clickable {
+                                onUpVoteClick()
+                            }
+                        )
                     Text(post.upVote.toString())
-                    Image(
-                        painterResource(id = ThemeR.drawable.thumb_down),
-                        contentDescription = "downVote"
-                    )
+                    if (post.userReaction == UserReaction.DISLIKE)
+                        Icon(
+                            painterResource(id = ThemeR.drawable.thumb_down),
+                            contentDescription = "downVote",
+                            modifier = Modifier.clickable {
+                                onDownVoteClick()
+                            },
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    else
+                        Icon(painterResource(id = ThemeR.drawable.thumb_down),
+                            contentDescription = "downVote",
+                            modifier = Modifier.clickable {
+                                onDownVoteClick()
+                            })
                 }
             }
 
@@ -132,16 +163,15 @@ fun Post(post: Post, onClick: () -> Unit) {
 fun NavigationTopBar() {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier
             .fillMaxWidth()
             .padding(20.dp)
 
     ) {
         Image(imageVector = Icons.Default.Menu, contentDescription = "menu", Modifier.size(30.dp))
         Image(
-            imageVector = Icons.Default.Search,
-            contentDescription = "search",
-            Modifier.size(30.dp)
+            imageVector = Icons.Default.Search, contentDescription = "search", Modifier.size(30.dp)
         )
     }
 
@@ -151,7 +181,8 @@ fun NavigationTopBar() {
 fun NavigationBottomBar() {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        modifier = Modifier
             .fillMaxWidth()
             .padding(10.dp)
 
