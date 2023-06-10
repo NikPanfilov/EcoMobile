@@ -243,7 +243,7 @@ fun SignUpScreen(navController: NavController, signUpViewModel: SignUpViewModel 
                 state.cityError
             ).any { it != null }
 
-            if (!hasError) signUpViewModel.handle(SignUpIntent.ConfirmSignIn)
+            if (!hasError) signUpViewModel.handle(SignUpIntent.ConfirmSignUp)
 
         }, Modifier.width(150.dp)) {
             Text(
