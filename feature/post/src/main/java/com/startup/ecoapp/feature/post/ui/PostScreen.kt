@@ -7,9 +7,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Face
@@ -18,9 +20,11 @@ import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,15 +35,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.startup.ecoapp.feature.post.R
+import com.startup.ecoapp.feature.post.domain.entity.Comment
+import com.startup.ecoapp.feature.post.presentation.PostViewModel
 import com.startup.theme.R as ThemeR
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PostScreen(navController: NavController) {
-	val post = Datasource.postList[0]
+fun PostScreen(postViewModel: PostViewModel = viewModel(), navController: NavController) {
+
+	val state by postViewModel.uiState.collectAsState()
+	val post = state.post
 
 	Scaffold(
 		bottomBar = { PostNavigationBottomBar(navController) },
@@ -63,7 +72,7 @@ fun PostScreen(navController: NavController) {
 						horizontalArrangement = Arrangement.spacedBy(10.dp)
 					) {
 						Image(
-							painterResource(id = post.avatarId),
+							painterResource(id = state.post.avatarId),
 							contentDescription = "avatar",
 							modifier = Modifier
 								.size(40.dp)
@@ -85,8 +94,8 @@ fun PostScreen(navController: NavController) {
 							.fillMaxWidth()
 					)
 					Text(post.text,
-						 color = Color.Black,
-						 style = MaterialTheme.typography.bodyLarge)
+						color = Color.Black,
+						style = MaterialTheme.typography.bodyLarge)
 					Row(
 						verticalAlignment = Alignment.CenterVertically,
 						horizontalArrangement = Arrangement.SpaceEvenly
@@ -108,8 +117,8 @@ fun PostScreen(navController: NavController) {
 					}
 				}
 			}
-			items(Datasource.commentList.size) { i ->
-				Comment(comment = Datasource.commentList[i])
+			items(state.comments.size) { i ->
+				Comment(comment = state.comments[i])
 			}
 		}
 	}
@@ -159,7 +168,6 @@ fun Comment(comment: Comment) {
 	}
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PostNavigationBottomBar(navController: NavController) {
 	var comment by remember { mutableStateOf("") }
@@ -197,15 +205,34 @@ fun PostNavigationTopBar(navController: NavController) {
 			.padding(10.dp)
 	) {
 		Image(imageVector = Icons.Default.ArrowBack,
-			  contentDescription = "back",
-			  modifier = Modifier
-				  .size(30.dp)
-				  .clickable { navController.navigate("home_screen") })
+			contentDescription = "back",
+			modifier = Modifier
+				.size(30.dp)
+				.clickable { navController.navigate("home_screen") })
 		Image(
 			imageVector = Icons.Default.Search, contentDescription = "search",
 			modifier = Modifier
 				.size(30.dp)
 		)
+	}
+}
+
+@Composable
+fun PostType(type: String) {
+	Surface(
+		shape = RoundedCornerShape(5.dp),
+		color = MaterialTheme.colorScheme.primary,
+		modifier = Modifier
+			.padding(end = 5.dp, bottom = 5.dp)
+			.height(25.dp),
+	) {
+		Text(
+			text = type,
+			style = MaterialTheme.typography.bodySmall,
+			color = Color.White,
+			modifier = Modifier.padding(5.dp),
+
+			)
 	}
 }
 
