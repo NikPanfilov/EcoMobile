@@ -66,6 +66,8 @@ dependencies {
 
 	implementation project(path: ':core:network')
 
+	implementation project(path: ':shared:reactions')
+
 	implementation project(path: ':feature:home')
 	implementation project(path: ':feature:post')
 	implementation project(path: ':feature:signin')
