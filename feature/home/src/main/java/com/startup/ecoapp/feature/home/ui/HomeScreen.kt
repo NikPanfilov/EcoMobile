@@ -39,10 +39,11 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import com.startup.ecoapp.feature.home.R
-import com.startup.ecoapp.feature.home.models.Post
 import com.startup.ecoapp.feature.home.presentation.HomeIntent
 import com.startup.ecoapp.feature.home.presentation.HomeViewModel
-import com.startup.ecoapp.feature.home.presentation.UserReaction
+import com.startup.shared.post.domain.entity.Post
+import com.startup.shared.reactions.DISLIKE
+import com.startup.shared.reactions.LIKE
 import com.startup.theme.R as ThemeR
 
 @Composable
@@ -62,9 +63,9 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = view
                 Post(state.posts[i], onClick = {
                     navController.navigate("post_screen")
                 }, onDownVoteClick = {
-                    homeViewModel.handle(HomeIntent.PutUpVote(state.posts[i].id))
+                    homeViewModel.handle(HomeIntent.UpVote(state.posts[i].id))
                 }, onUpVoteClick = {
-                    homeViewModel.handle(HomeIntent.PutDownVote(state.posts[i].id))
+                    homeViewModel.handle(HomeIntent.DownVote(state.posts[i].id))
                 })
             }
         }
@@ -90,28 +91,28 @@ fun Post(
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 Image(
-                    painter = rememberAsyncImagePainter(post.avatarImage),
+                    painter = rememberAsyncImagePainter(post.authorAvatar),
                     contentDescription = "avatar",
                     modifier = Modifier.size(40.dp)
                 )
-                Text(post.author, style = MaterialTheme.typography.titleSmall)
-                Text(post.time, color = Color.Gray)
+                Text(post.authorFirstName + post.authorLastName, style = MaterialTheme.typography.titleSmall)
+                Text(post.created, color = Color.Gray)
             }
             Row() {
                 for (type in post.categories) {
-                    PostType(type = type)
+                    PostType(type = type.name)
                 }
             }
             Text(post.title, style = MaterialTheme.typography.titleLarge)
-            if (post.image != null) Image(
-                rememberAsyncImagePainter(post.image),
+            if (post.photos != null) Image(
+                rememberAsyncImagePainter(post.photos),
                 contentDescription = "postImage",
                 modifier = Modifier.fillMaxWidth()
             )
             var postText = ""
             if (post.text.length > 100) postText = post.text.subSequence(0, 100).toString() + "..."
             Text(postText, color = Color.Gray,
-                modifier = Modifier.clickable { onClick() })
+                 modifier = Modifier.clickable { onClick() })
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceEvenly
@@ -120,7 +121,7 @@ fun Post(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    if (post.userReaction == UserReaction.LIKE)
+                    if (post.userReaction == LIKE)
                         Icon(
                             painterResource(id = ThemeR.drawable.thumb_up),
                             contentDescription = "upVote",
@@ -131,13 +132,13 @@ fun Post(
                         )
                     else
                         Icon(painterResource(id = ThemeR.drawable.thumb_up),
-                            contentDescription = "upVote",
-                            modifier = Modifier.clickable {
-                                onUpVoteClick()
-                            }
+                             contentDescription = "upVote",
+                             modifier = Modifier.clickable {
+                                 onUpVoteClick()
+                             }
                         )
-                    Text(post.upVote.toString())
-                    if (post.userReaction == UserReaction.DISLIKE)
+                    Text(post.likes.toString())
+                    if (post.userReaction == DISLIKE)
                         Icon(
                             painterResource(id = ThemeR.drawable.thumb_down),
                             contentDescription = "downVote",
@@ -147,7 +148,8 @@ fun Post(
                             tint = MaterialTheme.colorScheme.primary
                         )
                     else
-                        Icon(painterResource(id = ThemeR.drawable.thumb_down),
+                        Icon(
+                            painterResource(id = ThemeR.drawable.thumb_down),
                             contentDescription = "downVote",
                             modifier = Modifier.clickable {
                                 onDownVoteClick()

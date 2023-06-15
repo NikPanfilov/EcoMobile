@@ -2,6 +2,7 @@ package com.startup.ecoapp
 
 import android.app.Application
 import com.startup.ecoapp.di.appModule
+import com.startup.ecoapp.di.homeModule
 import com.startup.ecoapp.di.networkModule
 import com.startup.ecoapp.di.postModule
 import com.startup.ecoapp.di.reactionsModule
@@ -45,6 +46,7 @@ class App : Application() {
 
 			modules(signUpModule)
 			modules(signInModule)
+			modules(homeModule)
 		}
 	}
 }
