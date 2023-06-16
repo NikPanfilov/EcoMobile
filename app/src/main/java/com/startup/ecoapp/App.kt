@@ -2,9 +2,12 @@ package com.startup.ecoapp
 
 import android.app.Application
 import com.startup.ecoapp.di.appModule
-import com.startup.ecoapp.di.signUpModule
+import com.startup.ecoapp.di.homeModule
 import com.startup.ecoapp.di.networkModule
+import com.startup.ecoapp.di.postModule
+import com.startup.ecoapp.di.reactionsModule
 import com.startup.ecoapp.di.signInModule
+import com.startup.ecoapp.di.signUpModule
 import com.startup.ecoapp.di.tokenModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidFileProperties
@@ -38,8 +41,12 @@ class App : Application() {
 			modules(networkModule)
 			modules(tokenModule)
 
+			modules(reactionsModule)
+			modules(postModule)
+
 			modules(signUpModule)
 			modules(signInModule)
+			modules(homeModule)
 		}
 	}
 }
