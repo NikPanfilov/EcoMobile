@@ -2,12 +2,12 @@ package com.startup.ecoapp.feature.home.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.cachedIn
 import com.startup.ecoapp.core.network.token.domain.usecase.GetUserIdUseCase
 import com.startup.ecoapp.core.network.utils.CoroutineNetworkExceptionHandler
 import com.startup.shared.post.domain.usecase.GetPostsUseCase
-import com.startup.shared.reactions.DISLIKE
-import com.startup.shared.reactions.LIKE
-import com.startup.shared.reactions.domain.entity.Reaction
 import com.startup.shared.reactions.domain.usecase.CancelVoteUseCase
 import com.startup.shared.reactions.domain.usecase.DownVoteUseCase
 import com.startup.shared.reactions.domain.usecase.UpVoteUseCase
@@ -22,13 +22,19 @@ class HomeViewModel(
 	private val getUserIdUseCase: GetUserIdUseCase,
 	private val cancelVoteUseCase: CancelVoteUseCase,
 	private val downVoteUseCase: DownVoteUseCase,
-	private val upVoteUseCase: UpVoteUseCase
+	private val upVoteUseCase: UpVoteUseCase,
 ) : ViewModel() {
 
-	private val userId = getUserIdUseCase()
+	//private val userId = getUserIdUseCase()
 
 	private val _uiState = MutableStateFlow(HomeState())
 	val uiState: StateFlow<HomeState> = _uiState.asStateFlow()
+
+	val postPager = Pager(
+		PagingConfig(pageSize = 10)
+	) {
+		getPostsUseCase("")
+	}.flow.cachedIn(viewModelScope)
 
 	private val sendErrorHandler = CoroutineNetworkExceptionHandler { code ->
 		_uiState.update {
@@ -40,32 +46,22 @@ class HomeViewModel(
 	}
 
 	init {
-		updatePosts()
+
 	}
 
 	fun handle(intent: HomeIntent) {
 		when (intent) {
-			is HomeIntent.UpdatePostsIntent -> updatePosts()
 			is HomeIntent.UpVote            -> upVote(intent.postId)
 			is HomeIntent.DownVote          -> downVote(intent.postId)
 			is HomeIntent.CancelVote        -> cancelVote(intent.reactionId)
 		}
 	}
 
-	private fun updatePosts() {
-		viewModelScope.launch(sendErrorHandler) {
-			startLoading()
-			_uiState.update {
-				it.copy(posts = getPostsUseCase(filter = "", page = "1"))
-			}
-			endLoading()
-		}
-	}
 
 	private fun upVote(postId: String) {
 		viewModelScope.launch(sendErrorHandler) {
 			startLoading()
-			upVoteUseCase(Reaction(userId = userId, postId = postId, reaction = LIKE))
+			//upVoteUseCase(Reaction(userId = userId, postId = postId, reaction = LIKE))
 			endLoading()
 		}
 	}
@@ -73,7 +69,7 @@ class HomeViewModel(
 	private fun downVote(postId: String) {
 		viewModelScope.launch(sendErrorHandler) {
 			startLoading()
-			downVoteUseCase(Reaction(userId = userId, postId = postId, reaction = DISLIKE))
+			//downVoteUseCase(Reaction(userId = userId, postId = postId, reaction = DISLIKE))
 			endLoading()
 		}
 	}

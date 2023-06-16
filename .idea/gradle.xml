@@ -20,6 +20,8 @@
             <option value="$PROJECT_DIR$/feature/signin" />
             <option value="$PROJECT_DIR$/feature/signup" />
             <option value="$PROJECT_DIR$/shared" />
+            <option value="$PROJECT_DIR$/shared/post" />
+            <option value="$PROJECT_DIR$/shared/reactions" />
           </set>
         </option>
       </GradleProjectSettings>
