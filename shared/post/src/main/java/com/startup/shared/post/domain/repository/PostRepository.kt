@@ -10,4 +10,10 @@ interface PostRepository {
     suspend fun getPost(id: String): Post
 
     suspend fun getComments(id: String, filter: String, page: String): List<Comment>
+
+    suspend fun createComment(
+        userId: String,
+        postId: String,
+        commentText: String
+    )
 }

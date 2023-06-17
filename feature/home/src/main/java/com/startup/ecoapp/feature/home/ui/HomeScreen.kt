@@ -72,9 +72,9 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = koin
                     Post(it1, onClick = {
                         navController.navigate("post_screen/${postList[i]?.id}")
                     }, onDownVoteClick = {
-                        homeViewModel.handle(HomeIntent.UpVote(state.posts[i].id))
+                        homeViewModel.handle(HomeIntent.UpVote(postList[i]!!.id))
                     }, onUpVoteClick = {
-                        homeViewModel.handle(HomeIntent.DownVote(state.posts[i].id))
+                        homeViewModel.handle(HomeIntent.DownVote(postList[i]!!.id))
                     })
                 }
 
