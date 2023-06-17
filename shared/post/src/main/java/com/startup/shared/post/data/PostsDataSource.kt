@@ -26,7 +26,14 @@ class PostsDataSource(
                 nextKey = if (response.isNotEmpty()) page + 1 else null
             )
         } catch (e: Exception) {
-            LoadResult.Error(e)
+            if (e.message == "HTTP 404 Not Found")
+                LoadResult.Page(
+                    data = listOf(),
+                    prevKey = null,
+                    nextKey = null
+                )
+            else
+                LoadResult.Error(e)
         }
     }
 

@@ -21,14 +21,21 @@ class CommentsDataSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Comment> {
         return try {
             val page = params.key ?: 1
-            val response = repo.getComments(page = page.toString(), filter = "", id = id)
+            val response = repo.getComments(page = page.toString(), filter = filter, id = id)
             LoadResult.Page(
                 data = response,
                 prevKey = null,
                 nextKey = if (response.isNotEmpty()) page + 1 else null
             )
         } catch (e: Exception) {
-            LoadResult.Error(e)
+            if (e.message == "HTTP 404 Not Found")
+                LoadResult.Page(
+                    data = listOf(),
+                    prevKey = null,
+                    nextKey = null
+                )
+            else
+                LoadResult.Error(e)
         }
     }
 

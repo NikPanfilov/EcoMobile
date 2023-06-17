@@ -21,6 +21,7 @@ data class PostState
         likes = 0,
         dislikes = 0,
     ),
+    val userComment: String = "",
     val isLoading: Boolean = false,
     val error: String? = null
 )
