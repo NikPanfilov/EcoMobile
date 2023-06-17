@@ -2,18 +2,14 @@ package com.startup.ecoapp.feature.post.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.cachedIn
 import com.startup.ecoapp.core.network.token.domain.usecase.GetUserIdUseCase
 import com.startup.ecoapp.core.network.utils.CoroutineNetworkExceptionHandler
-import com.startup.shared.comment.domain.entity.CreatedComment
-import com.startup.shared.comment.domain.usecase.CreateCommentUseCase
-import com.startup.shared.comment.domain.usecase.GetPostCommentsUseCase
+import com.startup.shared.post.domain.usecase.CreateCommentUseCase
+import com.startup.shared.post.domain.usecase.GetCommentsUseCase
 import com.startup.shared.post.domain.usecase.GetPostByIdUseCase
-import com.startup.shared.reactions.DISLIKE
-import com.startup.shared.reactions.LIKE
-import com.startup.shared.reactions.domain.entity.Reaction
-import com.startup.shared.reactions.domain.usecase.CancelVoteUseCase
-import com.startup.shared.reactions.domain.usecase.DownVoteUseCase
-import com.startup.shared.reactions.domain.usecase.UpVoteUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,22 +17,21 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class PostViewModel(
-	private val getCommentsUseCase: GetPostCommentsUseCase,
+	private val getCommentsUseCase: GetCommentsUseCase,
 	private val getPostByIdUseCase: GetPostByIdUseCase,
 	private val createCommentUseCase: CreateCommentUseCase,
-	private val getUserIdUseCase: GetUserIdUseCase,
-	private val upVoteUseCase: UpVoteUseCase,
-	private val downVoteUseCase: DownVoteUseCase,
-	private val cancelVoteUseCase: CancelVoteUseCase
+	private val getUserIdUseCase: GetUserIdUseCase
 ) : ViewModel() {
 
 	private val _uiState = MutableStateFlow(PostState())
 	val uiState: StateFlow<PostState> = _uiState.asStateFlow()
-	private val userId = getUserIdUseCase()
+	//private val userId = getUserIdUseCase()
 
-	var postId = ""
-
-	var page = 1
+	val commentPager = Pager(
+		PagingConfig(pageSize = 10)
+	) {
+		getCommentsUseCase(id = "8ad0dc60-6ddc-4843-912a-198e9e915872")
+	}.flow.cachedIn(viewModelScope)
 
 	private val sendErrorHandler = CoroutineNetworkExceptionHandler { code ->
 		_uiState.update {
@@ -49,38 +44,23 @@ class PostViewModel(
 
 	init {
 		loadPost()
-		loadComments()
 	}
 
 	fun handle(intent: PostIntent) {
 		when (intent) {
 			is PostIntent.UpdateUserComment -> updateUserComment(intent.text)
-			is PostIntent.UpVote            -> upVotePost(intent.postId)
-			is PostIntent.DownVote          -> downVotePost(intent.postId)
-			is PostIntent.CancelVote        -> cancelVote(intent.reactionId)
-			is PostIntent.CommentUpVote     -> upVoteComment(intent.commentId)
-			is PostIntent.CommentDownVote   -> downVoteComment(intent.commentId)
+			is PostIntent.UpVote -> upVote(intent.postId)
+			is PostIntent.DownVote -> downVote(intent.postId)
+			is PostIntent.CancelVote -> cancelVote(intent.reactionId)
+			is PostIntent.CommentUpVote -> upVote(intent.commentId)
+			is PostIntent.CommentDownVote -> downVote(intent.commentId)
 			is PostIntent.CommentCancelVote -> cancelVote(intent.reactionId)
-			is PostIntent.CreateComment     -> createComment(
+			is PostIntent.CreateComment -> createComment(
 				commentText = intent.text,
 				postId = intent.postId
 			)
 
 			is PostIntent.LoadPost -> loadPost()
-            is PostIntent.LoadComments -> loadComments()
-		}
-	}
-
-	private fun loadComments() {
-		viewModelScope.launch(sendErrorHandler) {
-			startLoading()
-			_uiState.update {
-                val comments =
-                    it.comments + (getCommentsUseCase(id = postId, page = page.toString()))
-                it.copy(comments = comments)
-            }
-			page++
-			endLoading()
 		}
 	}
 
@@ -94,7 +74,7 @@ class PostViewModel(
 		viewModelScope.launch(sendErrorHandler) {
 			startLoading()
 			_uiState.update {
-				it.copy(post = getPostByIdUseCase(postId))
+				it.copy(post = getPostByIdUseCase("8ad0dc60-6ddc-4843-912a-198e9e915872"))
 			}
 			endLoading()
 		}
@@ -106,47 +86,31 @@ class PostViewModel(
 		}
 		viewModelScope.launch(sendErrorHandler) {
 			startLoading()
-			createCommentUseCase(CreatedComment(userId = userId, postId = postId, text = commentText))
+			createCommentUseCase(commentText = commentText, postId = postId, userId = /*userId*/ "")
 			endLoading()
 		}
 	}
 
-	private fun upVotePost(postId: String) {
+	private fun upVote(postId: String) {
 		viewModelScope.launch(sendErrorHandler) {
 			startLoading()
-			upVoteUseCase(Reaction(userId = userId, postId = postId, reaction = LIKE))
+			//upVoteUseCase(Reaction(userId = userId, postId = postId, reaction = LIKE))
 			endLoading()
 		}
 	}
 
-	private fun upVoteComment(commentId: String) {
+	private fun downVote(postId: String) {
 		viewModelScope.launch(sendErrorHandler) {
 			startLoading()
-			upVoteUseCase(Reaction(userId = userId, commentId = commentId, reaction = LIKE))
+			//downVoteUseCase(Reaction(userId = userId, postId = postId, reaction = DISLIKE))
 			endLoading()
 		}
 	}
 
-	private fun downVotePost(postId: String) {
+	private fun cancelVote(postId: String) {
 		viewModelScope.launch(sendErrorHandler) {
 			startLoading()
-			downVoteUseCase(Reaction(userId = userId, postId = postId, reaction = DISLIKE))
-			endLoading()
-		}
-	}
-
-	private fun downVoteComment(commentId: String) {
-		viewModelScope.launch(sendErrorHandler) {
-			startLoading()
-			downVoteUseCase(Reaction(userId = userId, commentId = commentId, reaction = DISLIKE))
-			endLoading()
-		}
-	}
-
-	private fun cancelVote(reactionId: String) {
-		viewModelScope.launch(sendErrorHandler) {
-			startLoading()
-			cancelVoteUseCase(reactionId)
+			//cancelVoteUseCase(postId)
 			endLoading()
 		}
 	}

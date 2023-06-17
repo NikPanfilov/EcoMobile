@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -32,11 +31,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -46,6 +42,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import androidx.paging.LoadState
+import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.rememberAsyncImagePainter
 import com.startup.ecoapp.feature.home.R
 import com.startup.ecoapp.feature.home.presentation.HomeIntent
@@ -58,24 +56,10 @@ import com.startup.theme.R as ThemeR
 fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = koinViewModel()) {
 
     val state by homeViewModel.uiState.collectAsState()
-
-    val lazyColumnListState = rememberLazyListState()
-
-    val shouldStartPaginate = remember {
-        derivedStateOf {
-            (lazyColumnListState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
-                ?: -9) >= (lazyColumnListState.layoutInfo.totalItemsCount - 6)
-        }
-    }
-
-    LaunchedEffect(key1 = shouldStartPaginate.value) {
-        if (shouldStartPaginate.value)
-            homeViewModel.handle(HomeIntent.LoadPosts)
-    }
+    val postList = homeViewModel.postPager.collectAsLazyPagingItems()
 
     Scaffold(bottomBar = { NavigationBottomBar() }, topBar = { NavigationTopBar() }) {
         LazyColumn(
-            state = lazyColumnListState,
             verticalArrangement = Arrangement.spacedBy(20.dp),
             modifier = Modifier
                 .background(Color.White)
@@ -83,28 +67,43 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = koin
                 .padding(paddingValues = it)
                 .padding(start = 20.dp, end = 20.dp)
         ) {
-            items(state.posts.size) { i ->
-                Post(state.posts[i], onClick = {
-                    navController.navigate("post_screen/${state.posts[i].id}")
-                }, onDownVoteClick = {
-                    homeViewModel.handle(HomeIntent.UpVote(state.posts[i].id))
-                }, onUpVoteClick = {
-                    homeViewModel.handle(HomeIntent.DownVote(state.posts[i].id))
-                })
-
-            }
-            when {
-                state.error != null -> item {
-                    ErrorItem(message = "Some error occurred")
+            items(postList.itemCount) { i ->
+                postList[i]?.let { it1 ->
+                    Post(it1, onClick = {
+                        navController.navigate("post_screen/${postList[i]?.id}")
+                    }, onDownVoteClick = {
+                        homeViewModel.handle(HomeIntent.UpVote(postList[i]!!.id))
+                    }, onUpVoteClick = {
+                        homeViewModel.handle(HomeIntent.DownVote(postList[i]!!.id))
+                    })
                 }
 
-                state.isLoading -> item {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        LoadingItem()
+            }
+            when (postList.loadState.append) {
+                is LoadState.NotLoading -> Unit
+                LoadState.Loading -> item {
+                    CircularProgressIndicator()
+                }
+
+                is LoadState.Error -> item {
+                    ErrorItem(message = "Some error occurred")
+                }
+            }
+
+            when (postList.loadState.refresh) {
+                is LoadState.NotLoading -> Unit
+                LoadState.Loading ->
+                    item {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            LoadingItem()
+                        }
                     }
+
+                is LoadState.Error -> item {
+                    ErrorItem(message = "Some error occurred")
                 }
             }
         }
