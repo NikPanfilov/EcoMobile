@@ -68,6 +68,7 @@ dependencies {
 
 	implementation project(path: ':shared:post')
 	implementation project(path: ':shared:reactions')
+	implementation project(path: ':shared:comment')
 
 	implementation project(path: ':feature:home')
 	implementation project(path: ':feature:post')
