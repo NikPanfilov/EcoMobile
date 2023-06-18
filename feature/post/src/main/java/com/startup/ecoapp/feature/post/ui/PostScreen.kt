@@ -45,7 +45,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.startup.ecoapp.feature.post.R
 import com.startup.ecoapp.feature.post.presentation.PostIntent
 import com.startup.ecoapp.feature.post.presentation.PostViewModel
-import com.startup.shared.post.domain.entity.Comment
+import com.startup.shared.comment.domain.entity.Comment
 import org.koin.androidx.compose.koinViewModel
 import com.startup.theme.R as ThemeR
 
@@ -144,9 +144,9 @@ fun PostScreen(postViewModel: PostViewModel = koinViewModel(), navController: Na
             items(commentList.itemCount) { i ->
                 commentList[i]?.let { it1 ->
                     Comment(it1,
-                        onDownVoteClick = {
-                            postViewModel.handle(PostIntent.CommentUpVote(commentList[i]!!.comment_id))
-                        }, onUpVoteClick = {
+                            onDownVoteClick = {
+                                postViewModel.handle(PostIntent.CommentUpVote(commentList[i]!!.comment_id))
+                            }, onUpVoteClick = {
                             postViewModel.handle(PostIntent.CommentDownVote(commentList[i]!!.comment_id))
                         })
                 }
@@ -154,18 +154,18 @@ fun PostScreen(postViewModel: PostViewModel = koinViewModel(), navController: Na
             }
             when (commentList.loadState.append) {
                 is LoadState.NotLoading -> Unit
-                LoadState.Loading -> item {
+                LoadState.Loading       -> item {
                     CircularProgressIndicator()
                 }
 
-                is LoadState.Error -> item {
+                is LoadState.Error      -> item {
                     ErrorItem(message = "Some error occurred")
                 }
             }
 
             when (commentList.loadState.refresh) {
                 is LoadState.NotLoading -> Unit
-                LoadState.Loading ->
+                LoadState.Loading       ->
                     item {
                         Box(
                             modifier = Modifier.fillMaxSize(),
@@ -175,7 +175,7 @@ fun PostScreen(postViewModel: PostViewModel = koinViewModel(), navController: Na
                         }
                     }
 
-                is LoadState.Error -> item {
+                is LoadState.Error      -> item {
                     ErrorItem(message = "Some error occurred")
                 }
             }
@@ -208,7 +208,7 @@ fun Comment(
                     .size(20.dp)
             )
             Text(
-                text = "${comment.user_first_name} ${comment.user_last_name}",
+                text = "${comment.userFirstName} ${comment.userLastName}",
                 style = MaterialTheme.typography.bodySmall
             )
             Text(
@@ -217,7 +217,7 @@ fun Comment(
                 style = MaterialTheme.typography.bodySmall
             )
         }
-        Text(comment.comment_text, style = MaterialTheme.typography.bodyMedium)
+        Text(comment.commentText, style = MaterialTheme.typography.bodyMedium)
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -229,7 +229,7 @@ fun Comment(
                     .size(20.dp)
                     .clickable(onClick = onUpVoteClick)
             )
-            Text(comment.count_likes.toString(), style = MaterialTheme.typography.bodyMedium)
+            Text(comment.likesCount.toString(), style = MaterialTheme.typography.bodyMedium)
             Image(
                 painter = painterResource(ThemeR.drawable.thumb_down),
                 contentDescription = "likes",
@@ -322,10 +322,10 @@ fun PostNavigationTopBar(navController: NavController) {
             .padding(10.dp)
     ) {
         Image(imageVector = Icons.Default.ArrowBack,
-            contentDescription = "back",
-            modifier = Modifier
-                .size(30.dp)
-                .clickable { navController.navigate("home_screen") })
+              contentDescription = "back",
+              modifier = Modifier
+                  .size(30.dp)
+                  .clickable { navController.navigate("home_screen") })
         Image(
             imageVector = Icons.Default.Search, contentDescription = "search",
             modifier = Modifier
@@ -352,7 +352,6 @@ fun PostType(type: String) {
             )
     }
 }
-
 
 @Composable
 @Preview
