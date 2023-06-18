@@ -6,6 +6,5 @@ import com.startup.shared.comment.domain.entity.CreatedComment
 interface CommentRepository {
 
 	suspend fun getPostComments(postId: String, filter: String, page: String): List<Comment>
-	suspend fun getThreadComments(threadId: String, filter: String, page: String): List<Comment>
 	suspend fun createComment(comment: CreatedComment)
 }
