@@ -56,6 +56,10 @@ dependencies {
 	implementation project(path: ':core:theme')
 	implementation project(path: ':core:network')
 
+	implementation project(path: ':shared:post')
+	implementation project(path: ':shared:reactions')
+	implementation project(path: ':shared:comment')
+
 	implementation 'com.google.android.material:material:1.9.0'
 	implementation 'androidx.core:core-ktx:1.10.1'
 	testImplementation 'junit:junit:4.13.2'
