@@ -8,11 +8,14 @@ import com.startup.shared.post.domain.repository.PostRepository
 
 class PostRepositoryImpl(private val api: PostApi) : PostRepository {
 
-    override suspend fun getPosts(filter: String, page: String): List<Post> =
-        api.getPosts(filter = filter, page = page).posts.map { it.toEntity() }
+	override suspend fun getPosts(filter: String, page: String): List<Post> =
+		api.getPosts(filter = filter, page = page).posts.map { it.toEntity() }
 
-    override suspend fun getPost(id: String): Post = api.getPost(id).toEntity()
+	override suspend fun getBlogPosts(blogId: String, filter: String, page: String): List<Post> =
+		api.getBlogPosts(blogId, filter, page).posts.map { it.toEntity() }
 
-    override suspend fun getComments(id: String, filter: String, page: String): List<Comment> =
-        api.getComments(id = id, filter = filter, page = page).comments.map { it.toEntity() }
+	override suspend fun getPost(id: String): Post = api.getPost(id).toEntity()
+
+	override suspend fun getComments(id: String, filter: String, page: String): List<Comment> =
+		api.getComments(id = id, filter = filter, page = page).comments.map { it.toEntity() }
 }
