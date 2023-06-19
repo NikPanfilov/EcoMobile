@@ -10,7 +10,10 @@ import com.startup.shared.comment.domain.repository.CommentRepository
 class CommentRepositoryImpl(private val api: CommentApi) : CommentRepository {
 
 	override suspend fun getPostComments(postId: String, filter: String, page: String): List<Comment> =
-		api.getComments(id = postId, filter = filter, page = page).comments.map { it.toEntity() }
+		api.getPostComments(id = postId, filter = filter, page = page).comments.map { it.toEntity() }
+
+	override suspend fun getThreadComments(threadId: String, filter: String, page: String): List<Comment> =
+		api.getThreadComments(id = threadId, filter = filter, page = page).comments.map { it.toEntity() }
 
 	override suspend fun createComment(comment: CreatedComment) {
 		api.createComment(comment.toDto())

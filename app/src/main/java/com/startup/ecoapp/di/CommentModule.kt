@@ -6,12 +6,14 @@ import com.startup.shared.comment.data.repository.CommentRepositoryImpl
 import com.startup.shared.comment.domain.repository.CommentRepository
 import com.startup.shared.comment.domain.usecase.CreateCommentUseCase
 import com.startup.shared.comment.domain.usecase.GetPostCommentsUseCase
+import com.startup.shared.comment.domain.usecase.GetThreadCommentsUseCase
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val commentModule = module {
 
 	single { GetPostCommentsUseCase(get()) }
+	single { GetThreadCommentsUseCase(get()) }
 	single { CreateCommentUseCase(get()) }
 
 	factory<CommentRepository> { CommentRepositoryImpl(get()) }
