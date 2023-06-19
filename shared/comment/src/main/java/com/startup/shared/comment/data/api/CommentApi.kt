@@ -11,7 +11,14 @@ import retrofit2.http.Query
 interface CommentApi {
 
 	@GET("api/posts/{id}/comments")
-	suspend fun getComments(
+	suspend fun getPostComments(
+		@Path("id") id: String,
+		@Query("filter") filter: String,
+		@Query("page") page: String
+	): CommentResponseDto
+
+	@GET("api/threads/{id}/comments")
+	suspend fun getThreadComments(
 		@Path("id") id: String,
 		@Query("filter") filter: String,
 		@Query("page") page: String
