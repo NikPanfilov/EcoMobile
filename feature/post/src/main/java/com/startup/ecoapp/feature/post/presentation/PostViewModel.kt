@@ -66,7 +66,8 @@ class PostViewModel(
 				postId = intent.postId
 			)
 
-			is PostIntent.LoadPost          -> loadPost()
+			is PostIntent.LoadPost -> loadPost()
+            is PostIntent.LoadComments -> loadComments()
 		}
 	}
 
@@ -74,8 +75,10 @@ class PostViewModel(
 		viewModelScope.launch(sendErrorHandler) {
 			startLoading()
 			_uiState.update {
-				it.copy(comments = getCommentsUseCase(id = postId, page = page.toString()))
-			}
+                val comments =
+                    it.comments + (getCommentsUseCase(id = postId, page = page.toString()))
+                it.copy(comments = comments)
+            }
 			page++
 			endLoading()
 		}

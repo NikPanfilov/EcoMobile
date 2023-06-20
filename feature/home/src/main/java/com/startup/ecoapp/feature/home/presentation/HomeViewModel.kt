@@ -49,7 +49,8 @@ class HomeViewModel(
 		viewModelScope.launch(sendErrorHandler) {
 			startLoading()
 			_uiState.update {
-				it.copy(posts = getPostsUseCase(page = page.toString()))
+				val posts = it.posts + (getPostsUseCase(page = page.toString()))
+				it.copy(posts = posts)
 			}
 			page++
 			endLoading()
@@ -61,6 +62,7 @@ class HomeViewModel(
 			is HomeIntent.UpVote     -> upVote(intent.postId)
 			is HomeIntent.DownVote   -> downVote(intent.postId)
 			is HomeIntent.CancelVote -> cancelVote(intent.reactionId)
+			is HomeIntent.LoadPosts -> loadPosts()
 		}
 	}
 
