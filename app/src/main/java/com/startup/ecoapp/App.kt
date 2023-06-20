@@ -6,7 +6,7 @@ import com.startup.ecoapp.di.commentModule
 import com.startup.ecoapp.di.homeModule
 import com.startup.ecoapp.di.networkModule
 import com.startup.ecoapp.di.postModule
-import com.startup.ecoapp.di.profileModule
+import com.startup.ecoapp.di.profileChangesModule
 import com.startup.ecoapp.di.reactionsModule
 import com.startup.ecoapp.di.signInModule
 import com.startup.ecoapp.di.signUpModule
@@ -50,7 +50,7 @@ class App : Application() {
 			modules(signUpModule)
 			modules(signInModule)
 			modules(homeModule)
-			modules(profileModule)
+			modules(profileChangesModule)
 		}
 	}
 }
