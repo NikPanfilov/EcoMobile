@@ -2,6 +2,7 @@ package com.startup.ecoapp.feature.post.presentation
 
 sealed class PostIntent {
     object LoadPost : PostIntent()
+    object LoadComments : PostIntent()
     class UpdateUserComment(val text: String) : PostIntent()
     class CreateComment(val text: String, val postId: String) : PostIntent()
     class UpVote(val postId: String) : PostIntent()
