@@ -75,6 +75,7 @@ dependencies {
 	implementation project(path: ':feature:signin')
 	implementation project(path: ':feature:signup')
 	implementation project(path: ':feature:home')
+	implementation project(path: ':feature:profile')
 	implementation 'androidx.core:core-ktx:1.10.1'
 
     testImplementation 'junit:junit:4.13.2'
