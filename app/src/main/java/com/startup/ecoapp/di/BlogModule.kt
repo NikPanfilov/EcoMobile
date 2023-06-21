@@ -15,11 +15,15 @@ import org.koin.dsl.module
 val blogModule = module {
 	viewModel {
 		BlogViewModel(
-			getBlogUseCase = get(),
-			editBlogUseCase = get(),
-			deleteBlogUseCase = get(),
-			getUserIdUseCase = get(),
-		)
+            getBlogUseCase = get(),
+            editBlogUseCase = get(),
+            deleteBlogUseCase = get(),
+            getUserIdUseCase = get(),
+            cancelVoteUseCase = get(),
+            downVoteUseCase = get(),
+            upVoteUseCase = get(),
+            getBlogPostsUseCase = get()
+        )
 	}
 
 	factory { createRetrofitService<BlogApi>(get(named(ORIGINAL))) }

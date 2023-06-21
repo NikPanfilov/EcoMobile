@@ -5,7 +5,7 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class PostResponseDto(
-	@Json(name = "posts") val posts: List<PostDto>
+	@Json(name = "posts_in_blog") val posts: List<PostDto>
 )
 
 @JsonClass(generateAdapter = true)
@@ -19,7 +19,7 @@ data class PostDto(
 	@Json(name = "post_title") val postTitle: String,
 	@Json(name = "post_text") val postText: String,
 	@Json(name = "categories") val categories: List<CategoryDto>,
-	@Json(name = "photos") val photos: String?,
+	@Json(name = "photos") val photos: List<PostPhotoDto>,
 	@Json(name = "created") val created: String?,
 	@Json(name = "edited") val edited: String?,
 	@Json(name = "count_likes") val likes: Int,
@@ -30,4 +30,28 @@ data class PostDto(
 data class CategoryDto(
 	@Json(name = "category_id") val id: String,
 	@Json(name = "category_name") val name: String,
+)
+
+@JsonClass(generateAdapter = true)
+data class PostPhotoDto(
+	@Json val photo_place_id: String,
+	@Json val photo_id: String,
+	@Json val post_id: String,
+	@Json val photo_path: String
+)
+
+@JsonClass(generateAdapter = true)
+data class BlogPhotoDto(
+	@Json val photo_place_id: String,
+	@Json val photo_id: String,
+	@Json val blog_id: String,
+	@Json val photo_path: String
+)
+
+@JsonClass(generateAdapter = true)
+data class UserPhotoDto(
+	@Json val photo_place_id: String,
+	@Json val photo_id: String,
+	@Json val user_id: String,
+	@Json val photo_path: String
 )

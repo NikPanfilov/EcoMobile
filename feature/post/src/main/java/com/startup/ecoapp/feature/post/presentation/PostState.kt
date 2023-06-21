@@ -1,11 +1,11 @@
 package com.startup.ecoapp.feature.post.presentation
 
+import com.startup.shared.comment.domain.entity.Comment
 import com.startup.shared.post.domain.entity.Post
 
-
 data class PostState
-    (
-    val post: Post = Post(
+	(
+	val post: Post = Post(
         id = "",
         blogId = "",
         blogTitle = "",
@@ -15,13 +15,14 @@ data class PostState
         title = "",
         text = "",
         categories = listOf(),
-        photos = "",
+        photos = listOf(),
         created = "",
         edited = "",
         likes = 0,
         dislikes = 0,
     ),
-    val userComment: String = "",
-    val isLoading: Boolean = false,
-    val error: String? = null
+	val comments: List<Comment> = emptyList(),
+	val userComment: String = "",
+	val isLoading: Boolean = false,
+	val error: String? = null
 )

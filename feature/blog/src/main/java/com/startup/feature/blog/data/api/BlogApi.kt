@@ -6,16 +6,16 @@ import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.PUT
-import retrofit2.http.Query
+import retrofit2.http.Path
 
 interface BlogApi {
 
-	@GET("api/blog/{id}")
-	suspend fun getBlog(@Query("id") id: String): BlogDto
+	@GET("api/blogs/{id}")
+	suspend fun getBlog(@Path("id") id: String): BlogDto
 
-	@PUT("api/blog/{id}")
-	suspend fun editBlog(@Query("id") id: String, @Body changes: BlogChangesDto)
+	@PUT("api/blogs/{id}")
+	suspend fun editBlog(@Path("id") id: String, @Body changes: BlogChangesDto)
 
-	@DELETE("api/blog/{id}")
-	suspend fun deleteBlog(@Query("id") id: String)
+	@DELETE("api/blogs/{id}")
+	suspend fun deleteBlog(@Path("id") id: String)
 }
