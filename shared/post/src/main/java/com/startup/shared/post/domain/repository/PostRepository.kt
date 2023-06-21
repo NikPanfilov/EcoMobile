@@ -1,21 +1,12 @@
 package com.startup.shared.post.domain.repository
 
-import com.startup.shared.post.domain.entity.Comment
 import com.startup.shared.post.domain.entity.Post
 
 interface PostRepository {
 
-    suspend fun getPosts(filter: String, page: String): List<Post>
+	suspend fun getPosts(filter: String, page: String): List<Post>
 
-    suspend fun getBlogPosts(blogId: String, filter: String, page: String): List<Post>
+	suspend fun getBlogPosts(blogId: String, filter: String, page: String): List<Post>
 
-    suspend fun getPost(id: String): Post
-
-    suspend fun getComments(id: String, filter: String, page: String): List<Comment>
-
-    suspend fun createComment(
-        userId: String,
-        postId: String,
-        commentText: String
-    )
+	suspend fun getPost(id: String): Post
 }
