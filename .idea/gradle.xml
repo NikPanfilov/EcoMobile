@@ -21,6 +21,7 @@
             <option value="$PROJECT_DIR$/feature/signup" />
             <option value="$PROJECT_DIR$/shared" />
             <option value="$PROJECT_DIR$/shared/comment" />
+            <option value="$PROJECT_DIR$/shared/events" />
             <option value="$PROJECT_DIR$/shared/post" />
             <option value="$PROJECT_DIR$/shared/reactions" />
           </set>

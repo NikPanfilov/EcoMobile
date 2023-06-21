@@ -3,6 +3,7 @@ package com.startup.ecoapp
 import android.app.Application
 import com.startup.ecoapp.di.appModule
 import com.startup.ecoapp.di.commentModule
+import com.startup.ecoapp.di.eventsModule
 import com.startup.ecoapp.di.homeModule
 import com.startup.ecoapp.di.networkModule
 import com.startup.ecoapp.di.postModule
@@ -45,6 +46,7 @@ class App : Application() {
 			modules(reactionsModule)
 			modules(postModule)
 			modules(commentModule)
+			modules(eventsModule)
 
 			modules(signUpModule)
 			modules(signInModule)
