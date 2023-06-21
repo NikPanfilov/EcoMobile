@@ -17,11 +17,12 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ThumbUp
@@ -40,15 +41,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import coil.compose.rememberAsyncImagePainter
-import com.startup.feature.blog.presentation.BlogIntent
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.startup.feature.blog.R
 import com.startup.feature.blog.domain.entity.Blog
+import com.startup.feature.blog.presentation.BlogIntent
 import com.startup.feature.blog.presentation.BlogViewModel
 import com.startup.shared.post.domain.entity.Post
 import org.koin.androidx.compose.koinViewModel
@@ -75,7 +79,7 @@ fun BlogScreen(
             blogViewModel.handle(BlogIntent.LoadPosts)
     }
 
-    Scaffold(bottomBar = { NavigationBottomBar() }, topBar = { NavigationTopBar() }) {
+    Scaffold(bottomBar = { NavigationBottomBar() }, topBar = { NavigationTopBar(navController) }) {
         LazyColumn(
             state = lazyColumnListState,
             verticalArrangement = Arrangement.spacedBy(20.dp),
@@ -83,20 +87,20 @@ fun BlogScreen(
                 .background(Color.White)
                 .fillMaxSize()
                 .padding(paddingValues = it)
-                .padding(start = 20.dp, end = 20.dp)
         ) {
             item {
                 BlogTitle(state.blog)
             }
             items(state.posts.size) { i ->
-                Post(state.posts[i], onClick = {
-                    navController.navigate("post_screen/${state.posts[i].id}")
-                }, onDownVoteClick = {
-                    blogViewModel.handle(BlogIntent.UpVote(state.posts[i].id))
-                }, onUpVoteClick = {
-                    blogViewModel.handle(BlogIntent.DownVote(state.posts[i].id))
-                })
-
+                Box(Modifier.padding(start = 20.dp, end = 20.dp)) {
+                    Post(state.posts[i], onClick = {
+                        navController.navigate("post_screen/${state.posts[i].id}")
+                    }, onDownVoteClick = {
+                        blogViewModel.handle(BlogIntent.UpVote(i))
+                    }, onUpVoteClick = {
+                        blogViewModel.handle(BlogIntent.DownVote(i))
+                    })
+                }
             }
             when {
                 state.error != null -> item {
@@ -134,15 +138,21 @@ fun Post(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                Image(
-                    painter = /*rememberAsyncImagePainter(post.blogAvatar),*/painterResource(
-                        androidx.appcompat.R.drawable.abc_ic_commit_search_api_mtrl_alpha
-                    ),
-                    contentDescription = "avatar",
-                    modifier = Modifier.size(40.dp)
+                AsyncImage(
+                    model = ImageRequest.Builder(context = LocalContext.current)
+                        .data("http://d.wolf.16.fvds.ru" + post.photos[0].photo_path)
+                        .build(),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(shape = CircleShape)
                 )
                 Text(post.blogTitle, style = MaterialTheme.typography.titleSmall)
-                Text(post.created.toString(), color = Color.Gray)
+                Text(
+                    post.created.subSequence(0, 10).toString(),
+                    color = Color.Gray,
+                    style = MaterialTheme.typography.bodySmall
+                )
             }
             Text(text = "${post.authorFirstName} ${post.authorLastName}", color = Color.Gray)
             LazyRow(Modifier.fillMaxWidth()) {
@@ -151,10 +161,13 @@ fun Post(
                 }
             }
             Text(post.title, style = MaterialTheme.typography.titleLarge)
-            Image(
-                rememberAsyncImagePainter(post.photos),
-                contentDescription = "postImage",
-                modifier = Modifier.fillMaxWidth()
+            AsyncImage(
+                model = ImageRequest.Builder(context = LocalContext.current)
+                    .data("http://d.wolf.16.fvds.ru" + post.photos[0].photo_path)
+                    .build(),
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxWidth()
             )
             var postText = ""
             if (post.text.length > 100) postText = post.text.subSequence(0, 100).toString() + "..."
@@ -253,21 +266,26 @@ fun ErrorItem(message: String) {
 }
 
 @Composable
-fun NavigationTopBar() {
+fun NavigationTopBar(navController: NavController) {
     Row(
-        verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(20.dp)
-
+            .background(MaterialTheme.colorScheme.primary)
+            .padding(10.dp)
     ) {
-        Image(imageVector = Icons.Default.Menu, contentDescription = "menu", Modifier.size(30.dp))
+        Image(imageVector = Icons.Default.ArrowBack,
+            contentDescription = "back",
+            modifier = Modifier
+                .size(30.dp)
+                .clickable { navController.navigate("home_screen") })
         Image(
-            imageVector = Icons.Default.Search, contentDescription = "search", Modifier.size(30.dp)
+            imageVector = Icons.Default.Search, contentDescription = "search",
+            modifier = Modifier
+                .size(30.dp)
         )
     }
-
 }
 
 @Composable
@@ -304,17 +322,35 @@ fun BlogTitle(blog: Blog) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.primary)
+            .padding(20.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
         if (blog.avatar.isNotEmpty())
-            Image(
-                painter = rememberAsyncImagePainter(
-                    "http://d.wolf.16.fvds.ru/${blog.avatar[0].photo_path}"
-                ),
-                contentDescription = null
+            AsyncImage(
+                model = ImageRequest.Builder(context = LocalContext.current)
+                    .data("http://d.wolf.16.fvds.ru" + blog.avatar[0].photo_path)
+                    .build(),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(150.dp)
+                    .clip(shape = CircleShape)
             )
-        Column() {
-            Text(blog.title)
-            Text(blog.description)
+        Column(
+            Modifier
+                .height(150.dp)
+                .width(150.dp)
+        ) {
+            Text(
+                blog.title,
+                color = MaterialTheme.colorScheme.onPrimary,
+                style = MaterialTheme.typography.bodyLarge
+            )
+            Text(
+                blog.description,
+                color = MaterialTheme.colorScheme.onPrimary,
+                style = MaterialTheme.typography.bodyMedium
+            )
         }
     }
 }

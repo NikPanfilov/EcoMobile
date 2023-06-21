@@ -17,7 +17,7 @@ import com.startup.feature.blog.presentation.ui.BlogScreen
 @Composable
 fun Navigation() {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = Screen.BlogScreen.route) {
+    NavHost(navController = navController, startDestination = Screen.HomeScreen.route) {
         composable(Screen.HomeScreen.route) {
             HomeScreen(navController = navController)
         }
@@ -50,6 +50,7 @@ fun Navigation() {
         composable(Screen.BlogScreen.route) {
             BlogScreen(navController = navController)
         }
+
 
     }
 }
