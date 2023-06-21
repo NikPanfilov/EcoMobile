@@ -24,6 +24,8 @@ data class PostDto(
 	@Json(name = "edited") val edited: String?,
 	@Json(name = "count_likes") val likes: Int,
 	@Json(name = "count_dislikes") val dislikes: Int,
+	@Json(name = "is_like") val isLike: Boolean,
+	@Json(name = "is_dislike") val isDislike: Boolean
 )
 
 @JsonClass(generateAdapter = true)

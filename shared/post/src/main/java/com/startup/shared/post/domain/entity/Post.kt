@@ -15,6 +15,8 @@ data class Post(
     val edited: String?,
     val likes: Int,
     val dislikes: Int,
+    var isLike: Boolean,
+    var isDislike: Boolean
 )
 
 data class Category(

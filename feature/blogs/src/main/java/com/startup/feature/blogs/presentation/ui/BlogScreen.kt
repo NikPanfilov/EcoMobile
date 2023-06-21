@@ -1,4 +1,4 @@
-package com.startup.ecoapp.feature.home.ui
+package com.startup.feature.blogs.presentation.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -21,10 +21,12 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.ThumbUp
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -44,24 +46,24 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.startup.ecoapp.feature.home.R
-import com.startup.ecoapp.feature.home.presentation.HomeIntent
-import com.startup.ecoapp.feature.home.presentation.HomeViewModel
+import com.startup.feature.blog.presentation.BlogsIntent
+import com.startup.feature.blogs.R
+import com.startup.feature.blogs.domain.entity.Blog
+import com.startup.feature.blogs.presentation.BlogsViewModel
 import com.startup.shared.post.domain.entity.Post
 import org.koin.androidx.compose.koinViewModel
-import com.startup.theme.R as ThemeR
 
 @Composable
-fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = koinViewModel()) {
-
-    val state by homeViewModel.uiState.collectAsState()
+fun BlogsScreen(
+    navController: NavController,
+    blogViewModel: BlogsViewModel = koinViewModel(),
+) {
+    val state by blogViewModel.uiState.collectAsState()
 
     val lazyColumnListState = rememberLazyListState()
 
@@ -74,10 +76,10 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = koin
 
     LaunchedEffect(key1 = shouldStartPaginate.value) {
         if (shouldStartPaginate.value)
-            homeViewModel.handle(HomeIntent.LoadPosts)
+            blogViewModel.handle(BlogsIntent.LoadBlogs)
     }
 
-    Scaffold(bottomBar = { NavigationBottomBar() }, topBar = { NavigationTopBar() }) {
+    Scaffold(bottomBar = { NavigationBottomBar() }, topBar = { NavigationTopBar(navController) }) {
         LazyColumn(
             state = lazyColumnListState,
             verticalArrangement = Arrangement.spacedBy(20.dp),
@@ -85,17 +87,13 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = koin
                 .background(Color.White)
                 .fillMaxSize()
                 .padding(paddingValues = it)
-                .padding(start = 20.dp, end = 20.dp)
         ) {
-            items(state.posts.size) { i ->
-                Post(state.posts[i], onClick = {
-                    navController.navigate("post_screen/${state.posts[i].id}")
-                }, onDownVoteClick = {
-                    homeViewModel.handle(HomeIntent.UpVote(state.posts[i].id))
-                }, onUpVoteClick = {
-                    homeViewModel.handle(HomeIntent.DownVote(state.posts[i].id))
-                })
-
+            items(state.blogs.size) { i ->
+                Box(Modifier.padding(start = 20.dp, end = 20.dp)) {
+                    Blog(state.blogs[i], onClick = {
+                        navController.navigate("blog_screen/${state.blogs[i].blogId}")
+                    })
+                }
             }
             when {
                 state.error != null -> item {
@@ -116,11 +114,9 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = koin
 }
 
 @Composable
-fun Post(
-    post: Post,
+fun Blog(
+    blog: Blog,
     onClick: () -> Unit,
-    onUpVoteClick: () -> Unit,
-    onDownVoteClick: () -> Unit,
 ) {
     Card() {
         Column(
@@ -135,83 +131,32 @@ fun Post(
             ) {
                 AsyncImage(
                     model = ImageRequest.Builder(context = LocalContext.current)
-                        .data("http://d.wolf.16.fvds.ru" + post.photos[0].photo_path)
+                        .data("http://d.wolf.16.fvds.ru" + blog.avatar[0].photo_path)
                         .build(),
                     contentDescription = null,
                     modifier = Modifier
                         .size(40.dp)
-                        .clip(CircleShape)
+                        .clip(shape = CircleShape)
                 )
-                Text(post.blogTitle, style = MaterialTheme.typography.titleSmall)
-                Text(post.created.toString(), color = Color.Gray)
+                Text(blog.title, style = MaterialTheme.typography.titleSmall)
             }
-            Text(text = "${post.authorFirstName} ${post.authorLastName}", color = Color.Gray)
-            LazyRow(Modifier.fillMaxWidth()) {
-                items(post.categories.size) {
-                    PostType(type = post.categories[it].name)
-                }
+            Text(text = "${blog.authorFirstName} ${blog.authorLastName}", color = Color.Gray)
+            Button(onClick = {}) {
+                Text("Subscribe")
             }
-            Text(post.title, style = MaterialTheme.typography.titleLarge)
             AsyncImage(
                 model = ImageRequest.Builder(context = LocalContext.current)
-                    .data("http://d.wolf.16.fvds.ru" + post.photos[0].photo_path)
+                    .data("http://d.wolf.16.fvds.ru" + blog.avatar[0].photo_path)
                     .build(),
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxWidth()
             )
-            var postText = ""
-            if (post.text.length > 100) postText = post.text.subSequence(0, 100).toString() + "..."
-            Text(postText, color = Color.Gray,
+            var blogDesc = ""
+            if (blog.description.length > 100) blogDesc =
+                blog.description.subSequence(0, 100).toString() + "..."
+            Text(blogDesc, color = Color.Gray,
                 modifier = Modifier.clickable { onClick() })
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    /*
-                    if (post. == LIKE)
-                        Icon(
-                            painterResource(id = ThemeR.drawable.thumb_up),
-                            contentDescription = "upVote",
-                            modifier = Modifier.clickable {
-                                onUpVoteClick()
-                            },
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    else
-
-                     */
-                    Icon(painterResource(id = ThemeR.drawable.thumb_up),
-                        contentDescription = "upVote",
-                        modifier = Modifier.clickable {
-                            onUpVoteClick()
-                        }
-                    )
-                    Text(post.likes.toString())
-                    /*if (post.userReaction == DISLIKE)
-                    Icon(
-                        painterResource(id = ThemeR.drawable.thumb_down),
-                        contentDescription = "downVote",
-                        modifier = Modifier.clickable {
-                            onDownVoteClick()
-                        },
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                else
-                */
-                    Icon(
-                        painterResource(id = ThemeR.drawable.thumb_down),
-                        contentDescription = "downVote",
-                        modifier = Modifier.clickable {
-                            onDownVoteClick()
-                        })
-                }
-            }
-
         }
     }
 }
@@ -257,21 +202,26 @@ fun ErrorItem(message: String) {
 }
 
 @Composable
-fun NavigationTopBar() {
+fun NavigationTopBar(navController: NavController) {
     Row(
-        verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(20.dp)
-
+            .background(MaterialTheme.colorScheme.primary)
+            .padding(10.dp)
     ) {
-        Image(imageVector = Icons.Default.Menu, contentDescription = "menu", Modifier.size(30.dp))
+        Image(imageVector = Icons.Default.ArrowBack,
+            contentDescription = "back",
+            modifier = Modifier
+                .size(30.dp)
+                .clickable { navController.navigate("home_screen") })
         Image(
-            imageVector = Icons.Default.Search, contentDescription = "search", Modifier.size(30.dp)
+            imageVector = Icons.Default.Search, contentDescription = "search",
+            modifier = Modifier
+                .size(30.dp)
         )
     }
-
 }
 
 @Composable
@@ -304,6 +254,44 @@ fun NavigationBottomBar() {
 }
 
 @Composable
+fun BlogTitle(blog: Blog) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.primary)
+            .padding(20.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        if (blog.avatar.isNotEmpty())
+            AsyncImage(
+                model = ImageRequest.Builder(context = LocalContext.current)
+                    .data("http://d.wolf.16.fvds.ru" + blog.avatar[0].photo_path)
+                    .build(),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(150.dp)
+                    .clip(shape = CircleShape)
+            )
+        Column(
+            Modifier
+                .height(150.dp)
+                .width(150.dp)
+        ) {
+            Text(
+                blog.title,
+                color = MaterialTheme.colorScheme.onPrimary,
+                style = MaterialTheme.typography.bodyLarge
+            )
+            Text(
+                blog.description,
+                color = MaterialTheme.colorScheme.onPrimary,
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
+    }
+}
+
+@Composable
 fun PostType(type: String) {
     Surface(
         shape = RoundedCornerShape(5.dp),
@@ -320,11 +308,4 @@ fun PostType(type: String) {
 
             )
     }
-}
-
-
-@Composable
-@Preview
-fun Preview() {
-    HomeScreen(navController = rememberNavController())
 }

@@ -49,7 +49,6 @@ class BlogViewModel(
         )
     )
     val uiState: StateFlow<BlogScreenState> = _uiState.asStateFlow()
-
     var page = 1
 
     private val sendErrorHandler = CoroutineNetworkExceptionHandler { code ->
@@ -79,10 +78,16 @@ class BlogViewModel(
     }
 
     fun loadBlog(blogId: String) {
+
         viewModelScope.launch(sendErrorHandler) {
+            val blog = getBlogUseCase(blogId)
+            val isAdmin = blog.userId == userId
             startLoading()
             _uiState.update {
-                it.copy(blog = getBlogUseCase(blogId))
+                it.copy(
+                    blog = blog,
+                    isAdmin = isAdmin
+                )
             }
             endLoading()
         }
@@ -90,26 +95,42 @@ class BlogViewModel(
 
     fun handle(intent: BlogIntent) {
         when (intent) {
-            is BlogIntent.UpVote -> upVote(intent.postId)
-            is BlogIntent.DownVote -> downVote(intent.postId)
+            is BlogIntent.UpVote -> upVote(intent.postIndex)
+            is BlogIntent.DownVote -> downVote(intent.postIndex)
             is BlogIntent.CancelVote -> cancelVote(intent.reactionId)
             is BlogIntent.LoadPosts -> loadPosts()
         }
     }
 
-    private fun upVote(postId: String) {
+    private fun upVote(postIndex: Int) {
+        val post = uiState.value.posts[postIndex]
         viewModelScope.launch(sendErrorHandler) {
             startLoading()
-            upVoteUseCase(Reaction(userId = userId, postId = postId, reaction = LIKE))
+            upVoteUseCase(Reaction(userId = userId, postId = post.id, reaction = LIKE))
             endLoading()
+        }
+        val posts = uiState.value.posts.toMutableList()
+        posts[postIndex].isLike = true
+        _uiState.update {
+            it.copy(
+                posts = posts
+            )
         }
     }
 
-    private fun downVote(postId: String) {
+    private fun downVote(postIndex: Int) {
+        val post = uiState.value.posts[postIndex]
         viewModelScope.launch(sendErrorHandler) {
             startLoading()
-            downVoteUseCase(Reaction(userId = userId, postId = postId, reaction = DISLIKE))
+            downVoteUseCase(Reaction(userId = userId, postId = post.id, reaction = DISLIKE))
             endLoading()
+        }
+        val posts = uiState.value.posts.toMutableList()
+        posts[postIndex].isDislike = true
+        _uiState.update {
+            it.copy(
+                posts = posts
+            )
         }
     }
 

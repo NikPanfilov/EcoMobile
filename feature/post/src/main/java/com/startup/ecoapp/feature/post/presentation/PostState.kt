@@ -20,6 +20,8 @@ data class PostState
         edited = "",
         likes = 0,
         dislikes = 0,
+        isLike = false,
+        isDislike = false
     ),
 	val comments: List<Comment> = emptyList(),
 	val userComment: String = "",

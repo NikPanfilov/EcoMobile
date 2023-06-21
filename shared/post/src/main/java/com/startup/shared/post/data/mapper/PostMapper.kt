@@ -23,7 +23,9 @@ fun PostDto.toEntity() = Post(
     created = created ?: "now",
     edited = edited,
     likes = likes,
-    dislikes = dislikes
+    dislikes = dislikes,
+    isDislike = isDislike,
+    isLike = isLike
 )
 
 fun CategoryDto.toEntity() = Category(

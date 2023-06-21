@@ -25,7 +25,7 @@ class HomeViewModel(
 	private val upVoteUseCase: UpVoteUseCase,
 ) : ViewModel() {
 
-	private val userId = getUserIdUseCase()
+	private val userId = /*getUserIdUseCase()*/""
 
 	private val _uiState = MutableStateFlow(HomeState())
 	val uiState: StateFlow<HomeState> = _uiState.asStateFlow()
