@@ -9,6 +9,7 @@ import com.startup.ecoapp.di.postModule
 import com.startup.ecoapp.di.reactionsModule
 import com.startup.ecoapp.di.signInModule
 import com.startup.ecoapp.di.signUpModule
+import com.startup.ecoapp.di.subscriptionsModule
 import com.startup.ecoapp.di.tokenModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidFileProperties
@@ -45,6 +46,7 @@ class App : Application() {
 			modules(reactionsModule)
 			modules(postModule)
 			modules(commentModule)
+			modules(subscriptionsModule)
 
 			modules(signUpModule)
 			modules(signInModule)

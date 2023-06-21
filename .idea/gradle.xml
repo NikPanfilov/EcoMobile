@@ -23,6 +23,7 @@
             <option value="$PROJECT_DIR$/shared/comment" />
             <option value="$PROJECT_DIR$/shared/post" />
             <option value="$PROJECT_DIR$/shared/reactions" />
+            <option value="$PROJECT_DIR$/shared/subscriptions" />
           </set>
         </option>
       </GradleProjectSettings>
