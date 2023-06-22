@@ -300,7 +300,12 @@ fun NavigationBottomBar(navController: NavController) {
             Text("Home")
         }
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Image(painterResource(id = R.drawable.question_answer), contentDescription = "chat")
+            Image(painterResource(id = R.drawable.question_answer),
+                contentDescription = "chat",
+                modifier = Modifier
+                    .clickable { navController.navigate("threads_screen") }
+            )
+
             Text("Threads")
         }
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
