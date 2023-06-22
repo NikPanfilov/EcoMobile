@@ -1,5 +1,6 @@
 package com.startup.ecoapp.feature.post.ui
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -36,12 +38,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.startup.ecoapp.feature.post.R
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.startup.ecoapp.feature.post.presentation.PostIntent
 import com.startup.ecoapp.feature.post.presentation.PostViewModel
 import com.startup.shared.comment.domain.entity.Comment
@@ -54,11 +59,11 @@ fun PostScreen(
     navController: NavController,
     postId: String
 ) {
-    postViewModel.postId = postId
+
     val state by postViewModel.uiState.collectAsState()
     val post = state.post
     val lazyColumnListState = rememberLazyListState()
-
+    Log.d("postik", post.toString())
     val shouldStartPaginate = remember {
         derivedStateOf {
             (lazyColumnListState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
@@ -106,14 +111,23 @@ fun PostScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        Image(
-                            painterResource(id = R.drawable.cat),
-                            contentDescription = "avatar",
-                            modifier = Modifier
-                                .size(40.dp)
-                        )
+                        if (post.photos.isNotEmpty())
+                            AsyncImage(
+                                model = ImageRequest.Builder(context = LocalContext.current)
+                                    .data("http://d.wolf.16.fvds.ru" + post.photos[0].photo_path)
+                                    .build(),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .clip(CircleShape)
+                            )
                         Text(post.blogTitle, style = MaterialTheme.typography.titleSmall)
-                        Text(post.created, color = Color.Gray)
+                        if (post.created.isNotEmpty())
+                            Text(
+                                text = post.created.subSequence(0, 10).toString(),
+                                color = Color.Gray,
+                                style = MaterialTheme.typography.bodySmall
+                            )
                     }
                     Text(
                         text = "${post.authorFirstName} ${post.authorLastName}",
@@ -125,12 +139,15 @@ fun PostScreen(
                         }
                     }
                     Text(post.title, style = MaterialTheme.typography.titleLarge)
-                    Image(
-                        painterResource(id = R.drawable.cat),
-                        contentDescription = "postImage",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    )
+                    if (post.photos.isNotEmpty())
+                        AsyncImage(
+                            model = ImageRequest.Builder(context = LocalContext.current)
+                                .data("http://d.wolf.16.fvds.ru" + post.photos[0].photo_path)
+                                .build(),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        )
                     Text(
                         post.text,
                         color = Color.Black,
@@ -198,18 +215,21 @@ fun Comment(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            Image(
-                painterResource(R.drawable.cat),
-                contentDescription = "avatar",
-                modifier = Modifier
-                    .size(20.dp)
-            )
+            if (comment.avatar.isNotEmpty())
+                AsyncImage(
+                    model = ImageRequest.Builder(context = LocalContext.current)
+                        .data("http://d.wolf.16.fvds.ru" + comment.avatar[0].photo_path)
+                        .build(),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(20.dp)
+                )
             Text(
                 text = "${comment.userFirstName} ${comment.userLastName}",
                 style = MaterialTheme.typography.bodySmall
             )
             Text(
-                comment.created,
+                text = comment.created.subSequence(0, 10).toString(),
                 color = Color.Gray,
                 style = MaterialTheme.typography.bodySmall
             )

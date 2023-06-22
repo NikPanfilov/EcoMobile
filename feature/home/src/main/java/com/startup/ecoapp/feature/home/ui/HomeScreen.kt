@@ -17,10 +17,11 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
@@ -39,14 +40,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import coil.compose.rememberAsyncImagePainter
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.startup.ecoapp.feature.home.R
 import com.startup.ecoapp.feature.home.presentation.HomeIntent
 import com.startup.ecoapp.feature.home.presentation.HomeViewModel
@@ -73,7 +77,9 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = koin
             homeViewModel.handle(HomeIntent.LoadPosts)
     }
 
-    Scaffold(bottomBar = { NavigationBottomBar() }, topBar = { NavigationTopBar() }) {
+    Scaffold(
+        bottomBar = { NavigationBottomBar(navController = navController) },
+        topBar = { NavigationTopBar() }) {
         LazyColumn(
             state = lazyColumnListState,
             verticalArrangement = Arrangement.spacedBy(20.dp),
@@ -129,15 +135,22 @@ fun Post(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                Image(
-                    painter = /*rememberAsyncImagePainter(post.blogAvatar),*/painterResource(
-                        androidx.appcompat.R.drawable.abc_ic_commit_search_api_mtrl_alpha
-                    ),
-                    contentDescription = "avatar",
-                    modifier = Modifier.size(40.dp)
+                AsyncImage(
+                    model = ImageRequest.Builder(context = LocalContext.current)
+                        .data("http://d.wolf.16.fvds.ru" + post.photos[0].photo_path)
+                        .build(),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
                 )
                 Text(post.blogTitle, style = MaterialTheme.typography.titleSmall)
-                Text(post.created.toString(), color = Color.Gray)
+                if (post.created.isNotEmpty())
+                    Text(
+                        text = post.created.subSequence(0, 10).toString(),
+                        color = Color.Gray,
+                        style = MaterialTheme.typography.bodySmall
+                    )
             }
             Text(text = "${post.authorFirstName} ${post.authorLastName}", color = Color.Gray)
             LazyRow(Modifier.fillMaxWidth()) {
@@ -146,10 +159,13 @@ fun Post(
                 }
             }
             Text(post.title, style = MaterialTheme.typography.titleLarge)
-            if (post.photos != null) Image(
-                rememberAsyncImagePainter(post.photos),
-                contentDescription = "postImage",
-                modifier = Modifier.fillMaxWidth()
+            AsyncImage(
+                model = ImageRequest.Builder(context = LocalContext.current)
+                    .data("http://d.wolf.16.fvds.ru" + post.photos[0].photo_path)
+                    .build(),
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxWidth()
             )
             var postText = ""
             if (post.text.length > 100) postText = post.text.subSequence(0, 100).toString() + "..."
@@ -266,7 +282,7 @@ fun NavigationTopBar() {
 }
 
 @Composable
-fun NavigationBottomBar() {
+fun NavigationBottomBar(navController: NavController) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceEvenly,
@@ -276,16 +292,23 @@ fun NavigationBottomBar() {
 
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Image(imageVector = Icons.Default.Home, contentDescription = "home")
+            Icon(
+                imageVector = Icons.Default.Home,
+                contentDescription = "home",
+                tint = MaterialTheme.colorScheme.primary
+            )
             Text("Home")
         }
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Image(painterResource(id = R.drawable.question_answer), contentDescription = "chat")
-            Text("Chat")
+            Text("Threads")
         }
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Image(imageVector = Icons.Default.Add, contentDescription = "add")
-            Text("Create")
+            Image(
+                imageVector = Icons.Default.List, contentDescription = "blogs", modifier = Modifier
+                    .clickable { navController.navigate("blogs_screen") }
+            )
+            Text("Blogs")
         }
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Image(imageVector = Icons.Default.Person, contentDescription = "profile")

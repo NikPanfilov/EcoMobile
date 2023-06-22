@@ -10,5 +10,9 @@ class PostRepositoryImpl(private val api: PostApi) : PostRepository {
 	override suspend fun getPosts(filter: String, page: String): List<Post> =
 		api.getPosts(filter = filter, page = page).posts.map { it.toEntity() }
 
-	override suspend fun getPost(id: String): Post = api.getPost(id = id).toEntity()
+	override suspend fun getBlogPosts(blogId: String, filter: String, page: String): List<Post> =
+		api.getBlogPosts(blogId, filter, page).posts.map { it.toEntity() }
+
+	override suspend fun getPost(id: String): Post = api.getPost(id).toEntity()
+
 }
