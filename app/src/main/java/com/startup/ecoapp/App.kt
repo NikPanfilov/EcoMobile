@@ -2,12 +2,11 @@ package com.startup.ecoapp
 
 import android.app.Application
 import com.startup.ecoapp.di.appModule
-import com.startup.ecoapp.di.blogModule
-import com.startup.ecoapp.di.blogsModule
 import com.startup.ecoapp.di.commentModule
 import com.startup.ecoapp.di.homeModule
 import com.startup.ecoapp.di.networkModule
 import com.startup.ecoapp.di.postModule
+import com.startup.ecoapp.di.profileModule
 import com.startup.ecoapp.di.reactionsModule
 import com.startup.ecoapp.di.signInModule
 import com.startup.ecoapp.di.signUpModule
@@ -51,9 +50,7 @@ class App : Application() {
 			modules(signUpModule)
 			modules(signInModule)
 			modules(homeModule)
-
-			modules(blogModule)
-			modules(blogsModule)
+			modules(profileModule)
 		}
 	}
 }
