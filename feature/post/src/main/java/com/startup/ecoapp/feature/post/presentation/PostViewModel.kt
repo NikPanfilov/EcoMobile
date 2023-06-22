@@ -32,9 +32,9 @@ class PostViewModel(
 
 	private val _uiState = MutableStateFlow(PostState())
 	val uiState: StateFlow<PostState> = _uiState.asStateFlow()
-	private val userId = getUserIdUseCase()
+    private val userId = /*getUserIdUseCase()*/""
 
-	var postId = ""
+    var postId = "8ad0dc60-6ddc-4843-912a-198e9e915872"
 
 	var page = 1
 

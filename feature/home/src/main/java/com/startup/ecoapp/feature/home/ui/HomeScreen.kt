@@ -20,8 +20,8 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
@@ -77,7 +77,9 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = koin
             homeViewModel.handle(HomeIntent.LoadPosts)
     }
 
-    Scaffold(bottomBar = { NavigationBottomBar() }, topBar = { NavigationTopBar() }) {
+    Scaffold(
+        bottomBar = { NavigationBottomBar(navController = navController) },
+        topBar = { NavigationTopBar() }) {
         LazyColumn(
             state = lazyColumnListState,
             verticalArrangement = Arrangement.spacedBy(20.dp),
@@ -143,7 +145,12 @@ fun Post(
                         .clip(CircleShape)
                 )
                 Text(post.blogTitle, style = MaterialTheme.typography.titleSmall)
-                Text(post.created.toString(), color = Color.Gray)
+                if (post.created.isNotEmpty())
+                    Text(
+                        text = post.created.subSequence(0, 10).toString(),
+                        color = Color.Gray,
+                        style = MaterialTheme.typography.bodySmall
+                    )
             }
             Text(text = "${post.authorFirstName} ${post.authorLastName}", color = Color.Gray)
             LazyRow(Modifier.fillMaxWidth()) {
@@ -275,7 +282,7 @@ fun NavigationTopBar() {
 }
 
 @Composable
-fun NavigationBottomBar() {
+fun NavigationBottomBar(navController: NavController) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceEvenly,
@@ -285,16 +292,23 @@ fun NavigationBottomBar() {
 
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Image(imageVector = Icons.Default.Home, contentDescription = "home")
+            Icon(
+                imageVector = Icons.Default.Home,
+                contentDescription = "home",
+                tint = MaterialTheme.colorScheme.primary
+            )
             Text("Home")
         }
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Image(painterResource(id = R.drawable.question_answer), contentDescription = "chat")
-            Text("Chat")
+            Text("Threads")
         }
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Image(imageVector = Icons.Default.Add, contentDescription = "add")
-            Text("Create")
+            Image(
+                imageVector = Icons.Default.List, contentDescription = "blogs", modifier = Modifier
+                    .clickable { navController.navigate("blogs_screen") }
+            )
+            Text("Blogs")
         }
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Image(imageVector = Icons.Default.Person, contentDescription = "profile")

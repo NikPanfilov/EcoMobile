@@ -4,18 +4,25 @@ plugins {
 }
 
 android {
-	namespace 'com.startup.feature.blogs'
-	compileSdk 33
+    namespace 'com.startup.feature.blogs'
+    compileSdk 33
 
-	defaultConfig {
-		minSdk 26
-		targetSdk 33
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion '1.4.7'
+    }
 
-		testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-		consumerProguardFiles "consumer-rules.pro"
-	}
+    defaultConfig {
+        minSdk 26
+        targetSdk 33
 
-	buildTypes {
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
 		release {
 			minifyEnabled false
 			proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'

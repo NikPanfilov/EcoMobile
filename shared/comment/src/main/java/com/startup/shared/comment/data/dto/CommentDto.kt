@@ -16,14 +16,14 @@ data class CommentDto(
     @Json(name = "user_first_name") val userFirstName: String,
     @Json(name = "user_last_name") val userLastName: String,
     @Json(name = "post_id") val postId: String,
-    @Json(name = "thread_id") val threadId: String,
+    @Json(name = "thread_id") val threadId: String?,
     @Json(name = "comment_text") val commentText: String,
     @Json(name = "created") val created: String,
     @Json(name = "edited") val edited: String,
-    @Json(name = "count_likes") val likesCount: Int,
-    @Json(name = "count_dislikes") val dislikesCount: Int,
-    @Json(name = "total_count") val totalCount: Int,
+    @Json(name = "count_likes") val likesCount: Int?,
+    @Json(name = "count_dislikes") val dislikesCount: Int?,
+    @Json(name = "total_count") val totalCount: Double?,
     @Json(name = "is_like") val isLike: Boolean,
     @Json(name = "is_dislike") val isDislike: Boolean,
-    @Json(name = "user_avatar") val userAvatar: List<UserPhotoDto>
+    @Json(name = "user_avatar") val userAvatar: List<UserPhotoDto>?
 )

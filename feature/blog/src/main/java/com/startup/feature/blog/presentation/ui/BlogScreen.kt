@@ -25,7 +25,6 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -61,6 +60,7 @@ import org.koin.androidx.compose.koinViewModel
 fun BlogScreen(
     navController: NavController,
     blogViewModel: BlogViewModel = koinViewModel(),
+    blogId: String
 ) {
     blogViewModel.loadBlog("aeadca14-2d03-47ce-8862-2f0c04cb4197")
     val state by blogViewModel.uiState.collectAsState()
@@ -148,11 +148,12 @@ fun Post(
                         .clip(shape = CircleShape)
                 )
                 Text(post.blogTitle, style = MaterialTheme.typography.titleSmall)
-                Text(
-                    post.created.subSequence(0, 10).toString(),
-                    color = Color.Gray,
-                    style = MaterialTheme.typography.bodySmall
-                )
+                if (post.created.isNotEmpty())
+                    Text(
+                        post.created.subSequence(0, 10).toString(),
+                        color = Color.Gray,
+                        style = MaterialTheme.typography.bodySmall
+                    )
             }
             Text(text = "${post.authorFirstName} ${post.authorLastName}", color = Color.Gray)
             LazyRow(Modifier.fillMaxWidth()) {
@@ -194,7 +195,8 @@ fun Post(
                     else
 
                      */
-                    Icon(Icons.Default.ThumbUp,
+                    Icon(
+                        painter = painterResource(id = com.startup.theme.R.drawable.thumb_up),
                         contentDescription = "upVote",
                         modifier = Modifier.clickable {
                             onUpVoteClick()
@@ -213,7 +215,7 @@ fun Post(
                 else
                 */
                     Icon(
-                        Icons.Default.ThumbUp,
+                        painterResource(id = com.startup.theme.R.drawable.thumb_down),
                         contentDescription = "downVote",
                         modifier = Modifier.clickable {
                             onDownVoteClick()
@@ -339,12 +341,13 @@ fun BlogTitle(blog: Blog) {
         Column(
             Modifier
                 .height(150.dp)
-                .width(150.dp)
+                .width(150.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             Text(
                 blog.title,
                 color = MaterialTheme.colorScheme.onPrimary,
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.headlineSmall
             )
             Text(
                 blog.description,

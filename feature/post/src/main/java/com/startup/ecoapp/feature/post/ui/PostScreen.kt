@@ -1,5 +1,6 @@
 package com.startup.ecoapp.feature.post.ui
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -58,11 +59,11 @@ fun PostScreen(
     navController: NavController,
     postId: String
 ) {
-    postViewModel.postId = postId
+
     val state by postViewModel.uiState.collectAsState()
     val post = state.post
     val lazyColumnListState = rememberLazyListState()
-
+    Log.d("postik", post.toString())
     val shouldStartPaginate = remember {
         derivedStateOf {
             (lazyColumnListState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
@@ -110,17 +111,23 @@ fun PostScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        AsyncImage(
-                            model = ImageRequest.Builder(context = LocalContext.current)
-                                .data("http://d.wolf.16.fvds.ru" + post.photos[0].photo_path)
-                                .build(),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(40.dp)
-                                .clip(CircleShape)
-                        )
+                        if (post.photos.isNotEmpty())
+                            AsyncImage(
+                                model = ImageRequest.Builder(context = LocalContext.current)
+                                    .data("http://d.wolf.16.fvds.ru" + post.photos[0].photo_path)
+                                    .build(),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .clip(CircleShape)
+                            )
                         Text(post.blogTitle, style = MaterialTheme.typography.titleSmall)
-                        Text(post.created, color = Color.Gray)
+                        if (post.created.isNotEmpty())
+                            Text(
+                                text = post.created.subSequence(0, 10).toString(),
+                                color = Color.Gray,
+                                style = MaterialTheme.typography.bodySmall
+                            )
                     }
                     Text(
                         text = "${post.authorFirstName} ${post.authorLastName}",
@@ -132,14 +139,15 @@ fun PostScreen(
                         }
                     }
                     Text(post.title, style = MaterialTheme.typography.titleLarge)
-                    AsyncImage(
-                        model = ImageRequest.Builder(context = LocalContext.current)
-                            .data("http://d.wolf.16.fvds.ru" + post.photos[0].photo_path)
-                            .build(),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    )
+                    if (post.photos.isNotEmpty())
+                        AsyncImage(
+                            model = ImageRequest.Builder(context = LocalContext.current)
+                                .data("http://d.wolf.16.fvds.ru" + post.photos[0].photo_path)
+                                .build(),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        )
                     Text(
                         post.text,
                         color = Color.Black,
@@ -207,20 +215,21 @@ fun Comment(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            AsyncImage(
-                model = ImageRequest.Builder(context = LocalContext.current)
-                    .data("http://d.wolf.16.fvds.ru" + comment.avatar[0].photo_path)
-                    .build(),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(20.dp)
-            )
+            if (comment.avatar.isNotEmpty())
+                AsyncImage(
+                    model = ImageRequest.Builder(context = LocalContext.current)
+                        .data("http://d.wolf.16.fvds.ru" + comment.avatar[0].photo_path)
+                        .build(),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(20.dp)
+                )
             Text(
                 text = "${comment.userFirstName} ${comment.userLastName}",
                 style = MaterialTheme.typography.bodySmall
             )
             Text(
-                comment.created,
+                text = comment.created.subSequence(0, 10).toString(),
                 color = Color.Gray,
                 style = MaterialTheme.typography.bodySmall
             )
