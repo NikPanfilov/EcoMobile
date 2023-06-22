@@ -6,7 +6,12 @@ import com.startup.shared.post.data.dto.UserPhotoDto
 
 @JsonClass(generateAdapter = true)
 data class CommentResponseDto(
-	@Json(name = "comments_ratings") val comments: List<CommentDto>
+    @Json(name = "comments_ratings") val comments: List<CommentDto>
+)
+
+@JsonClass(generateAdapter = true)
+data class ThreadCommentResponseDto(
+    @Json(name = "comments_in_thread") val comments: List<CommentDto>
 )
 
 @JsonClass(generateAdapter = true)
@@ -15,7 +20,7 @@ data class CommentDto(
     @Json(name = "user_id") val userId: String,
     @Json(name = "user_first_name") val userFirstName: String,
     @Json(name = "user_last_name") val userLastName: String,
-    @Json(name = "post_id") val postId: String,
+    @Json(name = "post_id") val postId: String?,
     @Json(name = "thread_id") val threadId: String?,
     @Json(name = "comment_text") val commentText: String,
     @Json(name = "created") val created: String,

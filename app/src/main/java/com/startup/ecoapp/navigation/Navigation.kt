@@ -56,6 +56,21 @@ fun Navigation() {
             BlogsScreen(navController = navController)
         }
 
+        composable(Screen.ThreadsScreen.route) {
+            com.example.threads.presentation.ui.ThreadsScreen(navController = navController)
+        }
+
+        composable("${Screen.ThreadScreen.route}/{threadId}",
+            arguments = listOf(
+                navArgument("threadId") { type = NavType.StringType }
+            )) {
+            val threadId = it.arguments?.getString("threadId")!!
+            com.example.thread.presentation.ui.ThreadScreen(
+                navController = navController,
+                threadId = threadId
+            )
+        }
+
 
     }
 }
