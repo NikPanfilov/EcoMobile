@@ -19,12 +19,12 @@ internal fun CommentDto.toEntity() = Comment(
     postId = postId,
     threadId = threadId,
     commentText = commentText,
-    dislikesCount = dislikesCount,
-    likesCount = likesCount,
+    dislikesCount = dislikesCount ?: 0,
+    likesCount = likesCount ?: 0,
     created = created,
     edited = edited,
-    totalCount = totalCount,
+    totalCount = totalCount ?: 0.0,
     userFirstName = userFirstName,
     userLastName = userLastName,
-    avatar = userAvatar.map { it.toEntity() }
+    avatar = userAvatar?.map { it.toEntity() } ?: listOf()
 )

@@ -12,7 +12,7 @@ data class Comment(
     val likesCount: Int,
     val created: String,
     val edited: String,
-    val totalCount: Int,
+    val totalCount: Double,
     val userFirstName: String,
     val userLastName: String,
     val avatar: List<Photo>

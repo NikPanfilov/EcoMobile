@@ -15,24 +15,20 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -51,11 +47,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.startup.feature.blog.presentation.BlogsIntent
 import com.startup.feature.blogs.R
 import com.startup.feature.blogs.domain.entity.Blog
+import com.startup.feature.blogs.presentation.BlogsIntent
 import com.startup.feature.blogs.presentation.BlogsViewModel
-import com.startup.shared.post.domain.entity.Post
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -79,19 +74,27 @@ fun BlogsScreen(
             blogViewModel.handle(BlogsIntent.LoadBlogs)
     }
 
-    Scaffold(bottomBar = { NavigationBottomBar() }, topBar = { NavigationTopBar(navController) }) {
+    Scaffold(
+        bottomBar = {
+            NavigationBottomBar(
+                navController = navController,
+                onCreateButtonClick = { blogViewModel.handle(BlogsIntent.OpenDialog) })
+        },
+        topBar = { NavigationTopBar(navController) }) { paddingValues ->
         LazyColumn(
             state = lazyColumnListState,
             verticalArrangement = Arrangement.spacedBy(20.dp),
             modifier = Modifier
                 .background(Color.White)
                 .fillMaxSize()
-                .padding(paddingValues = it)
+                .padding(paddingValues = paddingValues)
         ) {
             items(state.blogs.size) { i ->
                 Box(Modifier.padding(start = 20.dp, end = 20.dp)) {
                     Blog(state.blogs[i], onClick = {
                         navController.navigate("blog_screen/${state.blogs[i].blogId}")
+                    }, onSubscribeButton = {
+                        blogViewModel.handle(BlogsIntent.SubscribeBlog)
                     })
                 }
             }
@@ -110,13 +113,23 @@ fun BlogsScreen(
                 }
             }
         }
+
     }
+    if (state.createDialogOpen)
+        CreateBlogDialog(
+            blogTitle = state.userBlogTitle,
+            onTitleChange = { blogViewModel.handle(BlogsIntent.ChangeBlogTitle(it)) },
+            blogDescription = state.userBlogDescription,
+            onDescriptionChange = { blogViewModel.handle(BlogsIntent.ChangeBlogDescription(it)) },
+            onCreateButtonClick = { blogViewModel.handle(BlogsIntent.CreateBlog) }
+        )
 }
 
 @Composable
 fun Blog(
     blog: Blog,
     onClick: () -> Unit,
+    onSubscribeButton: () -> Unit,
 ) {
     Card() {
         Column(
@@ -225,7 +238,7 @@ fun NavigationTopBar(navController: NavController) {
 }
 
 @Composable
-fun NavigationBottomBar() {
+fun NavigationBottomBar(navController: NavController, onCreateButtonClick: () -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceEvenly,
@@ -243,7 +256,10 @@ fun NavigationBottomBar() {
             Text("Chat")
         }
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Image(imageVector = Icons.Default.Add, contentDescription = "add")
+            Image(
+                imageVector = Icons.Default.Add, contentDescription = "add", modifier = Modifier
+                    .clickable(onClick = onCreateButtonClick)
+            )
             Text("Create")
         }
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -253,59 +269,48 @@ fun NavigationBottomBar() {
     }
 }
 
+
 @Composable
-fun BlogTitle(blog: Blog) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.primary)
-            .padding(20.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        if (blog.avatar.isNotEmpty())
-            AsyncImage(
-                model = ImageRequest.Builder(context = LocalContext.current)
-                    .data("http://d.wolf.16.fvds.ru" + blog.avatar[0].photo_path)
-                    .build(),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(150.dp)
-                    .clip(shape = CircleShape)
-            )
-        Column(
+fun CreateBlogDialog(
+    blogTitle: String,
+    onTitleChange: (String) -> Unit,
+    blogDescription: String,
+    onDescriptionChange: (String) -> Unit,
+    onCreateButtonClick: () -> Unit
+) {
+    Box(Modifier.fillMaxSize()) {
+        Box(
             Modifier
-                .height(150.dp)
-                .width(150.dp)
+                .background(Color.Black.copy(alpha = 0.5f))
+                .fillMaxSize()
+                .clickable { }
         ) {
-            Text(
-                blog.title,
-                color = MaterialTheme.colorScheme.onPrimary,
-                style = MaterialTheme.typography.bodyLarge
-            )
-            Text(
-                blog.description,
-                color = MaterialTheme.colorScheme.onPrimary,
-                style = MaterialTheme.typography.bodyMedium
-            )
         }
-    }
-}
-
-@Composable
-fun PostType(type: String) {
-    Surface(
-        shape = RoundedCornerShape(5.dp),
-        color = MaterialTheme.colorScheme.primary,
-        modifier = Modifier
-            .padding(end = 5.dp, bottom = 5.dp)
-            .height(25.dp),
-    ) {
-        Text(
-            text = type,
-            style = MaterialTheme.typography.bodySmall,
-            color = Color.White,
-            modifier = Modifier.padding(5.dp),
-
-            )
+        Card(
+            modifier = Modifier
+                .align(Alignment.Center)
+        ) {
+            Column(
+                Modifier.padding(20.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text("Blog Title")
+                OutlinedTextField(
+                    value = blogTitle,
+                    onValueChange = onTitleChange,
+                    singleLine = true
+                )
+                Text("Description")
+                OutlinedTextField(
+                    value = blogDescription,
+                    onValueChange = onDescriptionChange,
+                    modifier = Modifier.height(150.dp)
+                )
+                Button(onClick = onCreateButtonClick) {
+                    Text("Create")
+                }
+            }
+        }
     }
 }

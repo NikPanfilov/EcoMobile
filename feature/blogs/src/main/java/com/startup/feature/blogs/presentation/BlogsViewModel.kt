@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.startup.ecoapp.core.network.token.domain.usecase.GetUserIdUseCase
 import com.startup.ecoapp.core.network.utils.CoroutineNetworkExceptionHandler
-import com.startup.feature.blog.presentation.BlogsIntent
 import com.startup.feature.blogs.domain.usecase.CreateBlogUseCase
 import com.startup.feature.blogs.domain.usecase.GetBlogsUseCase
 import com.startup.feature.blogs.domain.usecase.GetUserBlogsUseCase
@@ -60,11 +59,52 @@ class BlogsViewModel(
         when (intent) {
             is BlogsIntent.LoadBlogs -> loadBlogs()
             is BlogsIntent.CreateBlog -> createBlog()
+            is BlogsIntent.OpenDialog -> openDialog()
+            is BlogsIntent.SubscribeBlog -> subscribeBlog()
+            is BlogsIntent.ChangeBlogDescription -> changeUserBlogDescription(intent.description)
+            is BlogsIntent.ChangeBlogTitle -> changeUserBlogTitle(intent.title)
+        }
+    }
+
+    private fun changeUserBlogTitle(string: String) {
+        _uiState.update {
+            it.copy(userBlogTitle = string)
+        }
+    }
+
+    private fun changeUserBlogDescription(string: String) {
+        _uiState.update {
+            it.copy(userBlogDescription = string)
         }
     }
 
     private fun createBlog() {
+        ////////////
+        viewModelScope.launch {
+            /*
+            createBlogUseCase(
+                newBlog = NewBlog(
+                    userId = userId,
+                    title = uiState.value.userBlogTitle,
+                    description = uiState.value.userBlogDescription,
+                    avatar = ""
+                )
+            )
+             */
+            _uiState.update {
+                it.copy(createDialogOpen = false)
+            }
+        }
+    }
 
+    private fun subscribeBlog() {
+
+    }
+
+    private fun openDialog() {
+        _uiState.update {
+            it.copy(createDialogOpen = true)
+        }
     }
 
     private fun startLoading() {

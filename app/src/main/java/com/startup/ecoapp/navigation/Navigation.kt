@@ -12,6 +12,7 @@ import com.startup.ecoapp.feature.post.ui.PostScreen
 import com.startup.ecoapp.signin.ui.SignInScreen
 import com.startup.ecoapp.signup.ui.SignUpScreen
 import com.startup.feature.blog.presentation.ui.BlogScreen
+import com.startup.feature.blogs.presentation.ui.BlogsScreen
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -38,17 +39,21 @@ fun Navigation() {
         composable(Screen.SignUpScreen.route) {
             SignUpScreen(navController = navController)
         }
-        /*
-                composable("${Screen.BlogScreen.route}/{blogId}",
-                    arguments = listOf(
-                        navArgument("blogId") { type = NavType.StringType }
-                    )) {
-                    val blogId = it.arguments?.getString("blogId")!!
-                    BlogScreen(navController = navController, blogId = blogId)
-                }
-        */
+
+        composable("${Screen.BlogScreen.route}/{blogId}",
+            arguments = listOf(
+                navArgument("blogId") { type = NavType.StringType }
+            )) {
+            val blogId = it.arguments?.getString("blogId")!!
+            BlogScreen(navController = navController, blogId = blogId)
+        }
+
         composable(Screen.BlogScreen.route) {
-            BlogScreen(navController = navController)
+            BlogScreen(navController = navController, blogId = "")
+        }
+
+        composable(Screen.BlogsScreen.route) {
+            BlogsScreen(navController = navController)
         }
 
 
