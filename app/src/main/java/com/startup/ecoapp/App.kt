@@ -4,12 +4,14 @@ import android.app.Application
 import com.startup.ecoapp.di.appModule
 import com.startup.ecoapp.di.commentModule
 import com.startup.ecoapp.di.homeModule
+import com.startup.ecoapp.di.mapModule
 import com.startup.ecoapp.di.networkModule
 import com.startup.ecoapp.di.postModule
 import com.startup.ecoapp.di.reactionsModule
 import com.startup.ecoapp.di.signInModule
 import com.startup.ecoapp.di.signUpModule
 import com.startup.ecoapp.di.tokenModule
+import com.yandex.mapkit.MapKitFactory
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidFileProperties
 import org.koin.android.ext.koin.androidLogger
@@ -32,6 +34,8 @@ class App : Application() {
 
 		INSTANCE = this
 
+		MapKitFactory.setApiKey("32be1030-59a5-4540-965b-636a057fbd2b")
+
 		startKoin {
 			androidLogger(Level.ERROR)
 			androidContext(this@App)
@@ -49,6 +53,7 @@ class App : Application() {
 			modules(signUpModule)
 			modules(signInModule)
 			modules(homeModule)
+			modules(mapModule)
 		}
 	}
 }

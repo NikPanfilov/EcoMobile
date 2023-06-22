@@ -10,6 +10,9 @@ dependencyResolutionManagement {
 	repositories {
 		google()
 		mavenCentral()
+		maven {
+			url "https://maven.google.com/"
+		}
 	}
 }
 rootProject.name = "EcoApp"
@@ -27,3 +30,4 @@ include ':shared:post'
 include ':shared:reactions'
 include ':shared:comment'
 include ':shared:comment'
+include ':feature:map'

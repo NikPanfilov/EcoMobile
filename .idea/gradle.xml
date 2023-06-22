@@ -16,6 +16,7 @@
             <option value="$PROJECT_DIR$/core/theme" />
             <option value="$PROJECT_DIR$/feature" />
             <option value="$PROJECT_DIR$/feature/home" />
+            <option value="$PROJECT_DIR$/feature/map" />
             <option value="$PROJECT_DIR$/feature/post" />
             <option value="$PROJECT_DIR$/feature/signin" />
             <option value="$PROJECT_DIR$/feature/signup" />
