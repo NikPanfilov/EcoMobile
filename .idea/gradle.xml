@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GradleMigrationSettings" migrationVersion="1" />
+  <component name="GradleSettings">
+    <option name="linkedExternalProjectsSettings">
+      <GradleProjectSettings>
+        <option name="testRunner" value="GRADLE" />
+        <option name="distributionType" value="DEFAULT_WRAPPED" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/core" />
+            <option value="$PROJECT_DIR$/core/network" />
+            <option value="$PROJECT_DIR$/core/theme" />
+            <option value="$PROJECT_DIR$/feature" />
+            <option value="$PROJECT_DIR$/feature/blog" />
+            <option value="$PROJECT_DIR$/feature/blogs" />
+            <option value="$PROJECT_DIR$/feature/home" />
+            <option value="$PROJECT_DIR$/feature/post" />
+            <option value="$PROJECT_DIR$/feature/post-creation" />
+            <option value="$PROJECT_DIR$/feature/profile" />
+            <option value="$PROJECT_DIR$/feature/signin" />
+            <option value="$PROJECT_DIR$/feature/signup" />
+            <option value="$PROJECT_DIR$/feature/thread" />
+            <option value="$PROJECT_DIR$/feature/threads" />
+            <option value="$PROJECT_DIR$/shared" />
+            <option value="$PROJECT_DIR$/shared/categories" />
+            <option value="$PROJECT_DIR$/shared/comment" />
+            <option value="$PROJECT_DIR$/shared/events" />
+            <option value="$PROJECT_DIR$/shared/post" />
+            <option value="$PROJECT_DIR$/shared/reactions" />
+            <option value="$PROJECT_DIR$/shared/thread" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+    </option>
+  </component>
+</project>
